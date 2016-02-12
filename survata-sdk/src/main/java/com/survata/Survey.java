@@ -10,19 +10,6 @@ import com.survata.view.SurveyView;
 public class Survey {
     private static final String TAG = "Survey";
 
-//    public void createSurveyWall(publisher: String, brand: String, explainer: String) {
-//        let bundle = NSBundle(forClass: classForCoder)
-//        if let templateFile = bundle.URLForResource("template", withExtension: "html"),
-//        let template = try? String(contentsOfURL: templateFile, encoding: NSUTF8StringEncoding) {
-//            let html = template
-//                    .stringByReplacingOccurrencesOfString("[PUBLISHER_ID]", withString: publisher)
-//            .stringByReplacingOccurrencesOfString("[BRAND]", withString: brand)
-//            .stringByReplacingOccurrencesOfString("[EXPLAINER]", withString: explainer)
-//            print("\(NSDate()) loading survata...")
-//            webView.loadHTMLString(html, baseURL: NSURL(string: "https://www.survata.com"))
-//        }
-//    }
-
     public void createSurveyWall(Activity activity, String publisher, String brand, String explainer) {
 
         ViewGroup container = (ViewGroup) activity.getWindow().getDecorView();
@@ -40,7 +27,7 @@ public class Survey {
             }
         });
 
-        surveyView.createSurveyWall(publisher, brand, explainer);
+        surveyView.createSurveyWall(activity, publisher, brand, explainer);
     }
 
 

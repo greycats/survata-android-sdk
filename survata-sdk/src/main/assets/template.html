@@ -32,22 +32,22 @@
 				//preview: "5fd725139884422e9f1bb28f776c702d"
 			});
 			s.on("load", function(data) {
-				<!--webkit.messageHandlers.load.postMessage(data);-->
+				survey.onLoad(data);
 			});
 			s.on("interviewComplete", function() {
-				<!--webkit.messageHandlers.interviewComplete.postMessage({});-->
+				survey.onInterviewComplete();
 			});
 			s.on("interviewStart", function() {
-				<!--webkit.messageHandlers.interviewStart.postMessage({});-->
+				survey.onInterviewStart();
 			});
 			s.on("interviewSkip", function() {
-				<!--webkit.messageHandlers.interviewSkip.postMessage({});-->
+				survey.onInterviewSkip();
 			});
 			window.startInterview = s.startInterview;
-			<!--webkit.messageHandlers.ready.postMessage({});-->
+			survey.onReady();
 		}, true);
 		Survata.fail(function() {
-			<!--webkit.messageHandlers.onFail.postMessage();-->
+			survey.onFail();
 		});
 		</script>
 </body>

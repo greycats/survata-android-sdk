@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -18,11 +19,11 @@ public class SurveyView extends RelativeLayout {
 
     private static final String TAG = "SurveyView";
 
+    private OnCloseCallback mOnCloseCallback;
+
     public interface OnCloseCallback {
         void onClose();
     }
-
-    private OnCloseCallback mOnCloseCallback;
 
     public void setOnCloseCallback(OnCloseCallback onCloseCallback) {
         mOnCloseCallback = onCloseCallback;
@@ -63,15 +64,50 @@ public class SurveyView extends RelativeLayout {
 
     private class SurveyJavaScriptInterface {
 
+        private Context mContxt;
 
+
+        public SurveyJavaScriptInterface(Context contxt) {
+            mContxt = contxt;
+        }
+
+        @JavascriptInterface
+        public void onLoad(String data) {
+            Log.d(TAG, "onLoad: " + data);
+        }
+
+        @JavascriptInterface
+        public void onInterviewComplete() {
+            Log.d(TAG, "onInterviewComplete");
+        }
+
+        @JavascriptInterface
+        public void onInterviewStart() {
+            Log.d(TAG, "onInterviewStart");
+        }
+
+        @JavascriptInterface
+        public void onInterviewSkip() {
+            Log.d(TAG, "onInterviewSkip");
+        }
+
+        @JavascriptInterface
+        public void onReady() {
+            Log.d(TAG, "onReady");
+        }
+
+        @JavascriptInterface
+        public void onFail() {
+            Log.d(TAG, "onFail");
+        }
     }
 
-    public void createSurveyWall(String publisher, String brand, String explainer) {
+    public void createSurveyWall(Context context, String publisher, String brand, String explainer) {
         Log.d(TAG, "loading survey...");
 
         WebSettings webSettings = mWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
-        mWebView.addJavascriptInterface(new SurveyJavaScriptInterface(), "survey");
+        mWebView.addJavascriptInterface(new SurveyJavaScriptInterface(context), "survey");
 
         mWebView.setWebViewClient(new WebViewClient() {
             @Override
@@ -85,9 +121,9 @@ public class SurveyView extends RelativeLayout {
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
                 if (newProgress == 100) {
-                    mLoadingProgressBar.setVisibility(VISIBLE);
-                } else {
                     mLoadingProgressBar.setVisibility(GONE);
+                } else {
+                    mLoadingProgressBar.setVisibility(VISIBLE);
                 }
             }
         });
