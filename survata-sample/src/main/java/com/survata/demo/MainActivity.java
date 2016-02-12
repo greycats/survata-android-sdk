@@ -19,11 +19,9 @@ import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String TAG = "MainActivity";
     private Button mCreateSurvey;
     private ProgressBar mProgressBar;
-
-    public static final String TAG = "MainActivity";
-
     private Survey mSurvey = new Survey();
 
     @Override
@@ -41,14 +39,24 @@ public class MainActivity extends AppCompatActivity {
         });
 
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
-        mProgressBar.setVisibility(View.VISIBLE);
-        mCreateSurvey.setVisibility(View.GONE);
 
         checkSurvey();
     }
 
+    private void showFullView() {
+        mProgressBar.setVisibility(View.GONE);
+        mCreateSurvey.setVisibility(View.GONE);
+    }
+
+    private void showCreateSurveyWallButton() {
+        mProgressBar.setVisibility(View.GONE);
+        mCreateSurvey.setVisibility(View.VISIBLE);
+    }
 
     private void checkSurvey() {
+
+        mProgressBar.setVisibility(View.VISIBLE);
+        mCreateSurvey.setVisibility(View.GONE);
 
         RequestManager requestManager = new RequestManager() {
 
@@ -66,14 +74,23 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void onResponse(JSONObject response) {
 
+                                    try {
+                                        boolean valid = response.getBoolean("valid");
 
-                                    mProgressBar.setVisibility(View.GONE);
-                                    mCreateSurvey.setVisibility(View.VISIBLE);
+                                        if (valid) {
+                                            showCreateSurveyWallButton();
+                                            return;
+                                        }
+                                    } catch (JSONException e) {
+                                        Log.d(TAG, "JSONException", e);
+                                    }
+
+                                    showFullView();
                                 }
 
                                 @Override
                                 public void onErrorResponse(VolleyError error) {
-
+                                    showFullView();
                                 }
                             });
                 } catch (JSONException e) {
