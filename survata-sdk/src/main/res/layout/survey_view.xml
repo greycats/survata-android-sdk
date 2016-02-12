@@ -3,19 +3,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="5dp"
-                android:orientation="vertical">
+                android:padding="1dp"
+                android:background="@drawable/survey_bg">
 
     <WebView
         android:id="@+id/web_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"></WebView>
 
-    <Button
+    <ImageView
         android:id="@+id/close"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:text="close"/>
+        android:src="@android:drawable/ic_menu_close_clear_cancel"/>
 
     <ProgressBar
         android:id="@+id/loading"

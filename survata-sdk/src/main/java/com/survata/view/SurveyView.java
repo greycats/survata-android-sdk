@@ -9,7 +9,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
@@ -29,7 +29,7 @@ public class SurveyView extends RelativeLayout {
         mOnCloseCallback = onCloseCallback;
     }
 
-    private Button mClose;
+    private ImageView mCloseImage;
     private WebView mWebView;
     private ProgressBar mLoadingProgressBar;
 
@@ -45,10 +45,9 @@ public class SurveyView extends RelativeLayout {
         super(context, attrs, defStyleAttr);
         View.inflate(context, R.layout.survey_view, this);
 
-        mClose = (Button) findViewById(R.id.close);
+        mCloseImage = (ImageView) findViewById(R.id.close);
 
-
-        mClose.setOnClickListener(new OnClickListener() {
+        mCloseImage.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -64,11 +63,10 @@ public class SurveyView extends RelativeLayout {
 
     private class SurveyJavaScriptInterface {
 
-        private Context mContxt;
+        private Context mContext;
 
-
-        public SurveyJavaScriptInterface(Context contxt) {
-            mContxt = contxt;
+        public SurveyJavaScriptInterface(Context context) {
+            mContext = context;
         }
 
         @JavascriptInterface
