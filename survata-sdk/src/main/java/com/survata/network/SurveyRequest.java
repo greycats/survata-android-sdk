@@ -17,21 +17,28 @@ public class SurveyRequest extends JsonObjectRequest {
 
     private static final String TAG = "SurveyRequest";
 
+    public interface SurveyListener{
+        void onResponse(JSONObject response);
+        void onErrorResponse(VolleyError error);
+    }
 
     public SurveyRequest(@NonNull String url,
-                         @NonNull String requestBody) {
+                         @NonNull String requestBody,
+                         final SurveyListener surveyListener) {
         super(Method.POST, url,
                 requestBody,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         Log.e(TAG, "onResponse: " + response);
+                        surveyListener.onResponse(response);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.e(TAG, "createSurvey error: " + error);
+                        surveyListener.onErrorResponse(error);
                     }
                 });
     }

@@ -18,6 +18,12 @@ public abstract class RequestManager {
 
     public void makeRequest(Context context) {
         mCurrentRequest = createRequest();
+
+        if (mCurrentRequest == null) {
+            Log.d(TAG, "mCurrentRequest is null");
+            return;
+        }
+
         RequestQueue requestQueue = Networking.getRequestQueue(context);
         if (requestQueue == null) {
             Log.d(TAG, "RequestQueue is null");

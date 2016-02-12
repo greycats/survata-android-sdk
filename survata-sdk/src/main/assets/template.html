@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script>
+		(function(w, d, t, v) {
+	        w[v] = w[v] || {}; w[v].qr = []; w[v].qf = [];
+	        var got = 0, g = function() {
+	            if (got) { return; } got = 1;
+	            w[v].ft = setTimeout(function() {
+	                for (var i = 0; i < w[v].qf.length ; i++) { w[v].qf[i][0].call(w[v]); }
+	                w[v].f = 1; w[v].qf = [];
+	                w[v].fail = function(fn) { fn.call(w[v]); return w[v]; };
+	            }, 5000);
+	            var s = d.createElement(t);
+	            s.src = "https://api.survata.net/latest/js/survata.js?cb="+((new Date().getTime())/1e3).toFixed();
+	            var scr = d.getElementsByTagName(t)[0], par = scr.parentNode; par.insertBefore(s, scr);
+	        };
+	        w[v].ready = function() { g(); w[v].qr.push(arguments); return w[v]; };
+	        w[v].fail = function() { g(); w[v].qf.push(arguments); return w[v]; };
+	        w[v].publisher = "survata-test";
+	    }(window, document, 'script', 'Survata'));
+		</script>
+</head>
+<body>
+<script>
+		Survata.ready(function() {
+			var s = Survata.createSurveywall({
+				brand: "",
+				explainer: "",
+				//preview: "5fd725139884422e9f1bb28f776c702d"
+			});
+			s.on("load", function(data) {
+				<!--webkit.messageHandlers.load.postMessage(data);-->
+			});
+			s.on("interviewComplete", function() {
+				<!--webkit.messageHandlers.interviewComplete.postMessage({});-->
+			});
+			s.on("interviewStart", function() {
+				<!--webkit.messageHandlers.interviewStart.postMessage({});-->
+			});
+			s.on("interviewSkip", function() {
+				<!--webkit.messageHandlers.interviewSkip.postMessage({});-->
+			});
+			window.startInterview = s.startInterview;
+			<!--webkit.messageHandlers.ready.postMessage({});-->
+		}, true);
+		Survata.fail(function() {
+			<!--webkit.messageHandlers.onFail.postMessage();-->
+		});
+		</script>
+</body>
+</html>
