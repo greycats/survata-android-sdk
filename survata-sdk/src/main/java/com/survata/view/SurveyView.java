@@ -39,6 +39,7 @@ public class SurveyView extends RelativeLayout {
         View.inflate(context, R.layout.survey_view, this);
 
         mWebView = (WebView) findViewById(R.id.web_view);
+        mWebView.setVerticalScrollBarEnabled(false);
         mLoadingProgressBar = (ProgressBar) findViewById(R.id.loading);
     }
 
