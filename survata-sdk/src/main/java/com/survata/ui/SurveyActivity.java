@@ -1,10 +1,12 @@
-package com.survata.view;
+package com.survata.ui;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.webkit.JavascriptInterface;
@@ -12,35 +14,41 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 
 import com.survata.R;
 
-public class SurveyView extends RelativeLayout {
+public class SurveyActivity extends Activity {
 
     private static final String TAG = "SurveyView";
+    private static final String PUBLISHER = "publisher";
+    private static final String BRAND = "brand";
+    private static final String EXPLAINER = "explainer";
 
     private Handler mHandler = new Handler(Looper.getMainLooper());
-
     private WebView mWebView;
     private ProgressBar mLoadingProgressBar;
+    private ImageView mCloseImage;
 
-    public SurveyView(Context context) {
-        this(context, null);
-    }
-
-    public SurveyView(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
-    }
-
-    public SurveyView(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        View.inflate(context, R.layout.survey_view, this);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.survey_view);
 
         mWebView = (WebView) findViewById(R.id.web_view);
         mWebView.setVerticalScrollBarEnabled(false);
         mLoadingProgressBar = (ProgressBar) findViewById(R.id.loading);
+        mCloseImage = (ImageView) findViewById(R.id.close);
+
+        mCloseImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SurveyActivity.this.finish();
+            }
+        });
+
+        createSurveyWall();
     }
 
     private class SurveyJavaScriptInterface {
@@ -54,6 +62,8 @@ public class SurveyView extends RelativeLayout {
         @JavascriptInterface
         public void onLoad(Object data) {
             Log.d(TAG, "onLoad: " + data);
+
+            mCloseImage.setVisibility(View.VISIBLE);
 
 //            if ("monetizable" === data.status) {
 //                alert("Survata has a monetizable interview for the current user.");
@@ -92,11 +102,26 @@ public class SurveyView extends RelativeLayout {
         @JavascriptInterface
         public void onFail() {
             Log.d(TAG, "onFail");
+            SurveyActivity.this.finish();
         }
     }
 
-    public void createSurveyWall(Context context, String publisher, String brand, String explainer) {
+    public static void start(Activity activity, String publisher, String brand, String explainer) {
+        Intent intent = new Intent(activity, SurveyActivity.class);
+        intent.putExtra(PUBLISHER, publisher);
+        intent.putExtra(BRAND, brand);
+        intent.putExtra(EXPLAINER, explainer);
+
+        activity.startActivity(intent);
+    }
+
+
+    public void createSurveyWall() {
         Log.d(TAG, "loading survey...");
+
+        String publisher = getIntent().getStringExtra(PUBLISHER);
+        String brand = getIntent().getStringExtra(BRAND);
+        String explainer = getIntent().getStringExtra(EXPLAINER);
 
         WebSettings webSettings = mWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
@@ -108,7 +133,7 @@ public class SurveyView extends RelativeLayout {
             webSettings.setAllowFileAccessFromFileURLs(true);
         }
 
-        mWebView.addJavascriptInterface(new SurveyJavaScriptInterface(context), "survey");
+        mWebView.addJavascriptInterface(new SurveyJavaScriptInterface(this), "survey");
 
         mWebView.setWebViewClient(new WebViewClient() {
             @Override
@@ -121,9 +146,9 @@ public class SurveyView extends RelativeLayout {
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
                 if (newProgress == 100) {
-                    mLoadingProgressBar.setVisibility(GONE);
+                    mLoadingProgressBar.setVisibility(View.GONE);
                 } else {
-                    mLoadingProgressBar.setVisibility(VISIBLE);
+                    mLoadingProgressBar.setVisibility(View.VISIBLE);
                 }
             }
         });

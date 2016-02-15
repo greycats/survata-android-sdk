@@ -3,14 +3,12 @@ package com.survata;
 import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
-import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.survata.network.RequestManager;
 import com.survata.network.SurveyRequest;
-import com.survata.view.SurveyView;
+import com.survata.ui.SurveyActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,16 +21,7 @@ public class Survey {
     }
 
     public void createSurveyWall(Activity activity, String publisher, String brand, String explainer) {
-
-        ViewGroup container = (ViewGroup) activity.getWindow().getDecorView();
-        final ViewGroup root = (ViewGroup) container.findViewById(android.R.id.content);
-
-        final SurveyView surveyView = new SurveyView(activity);
-
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
-        root.addView(surveyView, params);
-
-        surveyView.createSurveyWall(activity, publisher, brand, explainer);
+        SurveyActivity.start(activity, publisher, brand, explainer);
     }
 
     public void create(Context context, final String contentName, final String publisherUuid, final SurveyCheckCallBack surveyCheckCallBack) {
