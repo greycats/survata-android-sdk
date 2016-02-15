@@ -1,6 +1,9 @@
 package com.survata.view;
 
 import android.content.Context;
+import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -9,7 +12,6 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
@@ -19,17 +21,8 @@ public class SurveyView extends RelativeLayout {
 
     private static final String TAG = "SurveyView";
 
-    private OnCloseCallback mOnCloseCallback;
+    private Handler mHandler = new Handler(Looper.getMainLooper());
 
-    public interface OnCloseCallback {
-        void onClose();
-    }
-
-    public void setOnCloseCallback(OnCloseCallback onCloseCallback) {
-        mOnCloseCallback = onCloseCallback;
-    }
-
-    private ImageView mCloseImage;
     private WebView mWebView;
     private ProgressBar mLoadingProgressBar;
 
@@ -45,18 +38,6 @@ public class SurveyView extends RelativeLayout {
         super(context, attrs, defStyleAttr);
         View.inflate(context, R.layout.survey_view, this);
 
-        mCloseImage = (ImageView) findViewById(R.id.close);
-
-        mCloseImage.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if (mOnCloseCallback != null) {
-                    mOnCloseCallback.onClose();
-                }
-            }
-        });
-
         mWebView = (WebView) findViewById(R.id.web_view);
         mLoadingProgressBar = (ProgressBar) findViewById(R.id.loading);
     }
@@ -70,28 +51,41 @@ public class SurveyView extends RelativeLayout {
         }
 
         @JavascriptInterface
-        public void onLoad(String data) {
+        public void onLoad(Object data) {
             Log.d(TAG, "onLoad: " + data);
+
+//            if ("monetizable" === data.status) {
+//                alert("Survata has a monetizable interview for the current user.");
+//            }
+//            else {
+//                alert("Survata does not have a monetizable interview for the current user.");
+//            }
         }
 
         @JavascriptInterface
         public void onInterviewComplete() {
-            Log.d(TAG, "onInterviewComplete");
+            Log.d(TAG, "The interview is complete.  Here is your premium content.");
         }
 
         @JavascriptInterface
         public void onInterviewStart() {
-            Log.d(TAG, "onInterviewStart");
+            Log.d(TAG, "The interview has started.");
         }
 
         @JavascriptInterface
         public void onInterviewSkip() {
-            Log.d(TAG, "onInterviewSkip");
+            Log.d(TAG, "You skipped the interview.  Enjoy the content anyway.");
         }
 
         @JavascriptInterface
         public void onReady() {
             Log.d(TAG, "onReady");
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    mWebView.loadUrl("javascript:startInterview()");
+                }
+            });
         }
 
         @JavascriptInterface
@@ -105,6 +99,14 @@ public class SurveyView extends RelativeLayout {
 
         WebSettings webSettings = mWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
+        webSettings.setUseWideViewPort(true);
+        webSettings.setLoadWithOverviewMode(true);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            webSettings.setAllowUniversalAccessFromFileURLs(true);
+            webSettings.setAllowFileAccessFromFileURLs(true);
+        }
+
         mWebView.addJavascriptInterface(new SurveyJavaScriptInterface(context), "survey");
 
         mWebView.setWebViewClient(new WebViewClient() {
@@ -113,7 +115,6 @@ public class SurveyView extends RelativeLayout {
                 return false;
             }
         });
-
 
         mWebView.setWebChromeClient(new WebChromeClient() {
             @Override
@@ -126,8 +127,6 @@ public class SurveyView extends RelativeLayout {
             }
         });
 
-
         mWebView.loadUrl("file:///android_asset/template.html");
     }
-
 }

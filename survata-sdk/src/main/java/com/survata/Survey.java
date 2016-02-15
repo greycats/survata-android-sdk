@@ -32,13 +32,6 @@ public class Survey {
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
         root.addView(surveyView, params);
 
-        surveyView.setOnCloseCallback(new SurveyView.OnCloseCallback() {
-            @Override
-            public void onClose() {
-                root.removeView(surveyView);
-            }
-        });
-
         surveyView.createSurveyWall(activity, publisher, brand, explainer);
     }
 
