@@ -16,6 +16,8 @@ import org.json.JSONObject;
 public class Survey {
     private static final String TAG = "Survey";
 
+    public static final int REQUEST_SHOW_SURVEY = 2016;
+
     public interface SurveyCheckCallBack {
         void onCheckValid(boolean valid);
     }

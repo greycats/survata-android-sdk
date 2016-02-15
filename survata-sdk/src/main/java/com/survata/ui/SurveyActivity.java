@@ -5,8 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.webkit.JavascriptInterface;
@@ -14,10 +12,10 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.survata.R;
+import com.survata.Survey;
 
 public class SurveyActivity extends Activity {
 
@@ -25,11 +23,10 @@ public class SurveyActivity extends Activity {
     private static final String PUBLISHER = "publisher";
     private static final String BRAND = "brand";
     private static final String EXPLAINER = "explainer";
+    private static final String JS_INTERFACE_NAME = "Android";
 
-    private Handler mHandler = new Handler(Looper.getMainLooper());
     private WebView mWebView;
     private ProgressBar mLoadingProgressBar;
-    private ImageView mCloseImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,14 +36,6 @@ public class SurveyActivity extends Activity {
         mWebView = (WebView) findViewById(R.id.web_view);
         mWebView.setVerticalScrollBarEnabled(false);
         mLoadingProgressBar = (ProgressBar) findViewById(R.id.loading);
-        mCloseImage = (ImageView) findViewById(R.id.close);
-
-        mCloseImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SurveyActivity.this.finish();
-            }
-        });
 
         createSurveyWall();
     }
@@ -60,43 +49,10 @@ public class SurveyActivity extends Activity {
         }
 
         @JavascriptInterface
-        public void onLoad(Object data) {
-            Log.d(TAG, "onLoad: " + data);
-
-            mCloseImage.setVisibility(View.VISIBLE);
-
-//            if ("monetizable" === data.status) {
-//                alert("Survata has a monetizable interview for the current user.");
-//            }
-//            else {
-//                alert("Survata does not have a monetizable interview for the current user.");
-//            }
-        }
-
-        @JavascriptInterface
         public void onInterviewComplete() {
             Log.d(TAG, "The interview is complete.  Here is your premium content.");
-        }
-
-        @JavascriptInterface
-        public void onInterviewStart() {
-            Log.d(TAG, "The interview has started.");
-        }
-
-        @JavascriptInterface
-        public void onInterviewSkip() {
-            Log.d(TAG, "You skipped the interview.  Enjoy the content anyway.");
-        }
-
-        @JavascriptInterface
-        public void onReady() {
-            Log.d(TAG, "onReady");
-            mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    mWebView.loadUrl("javascript:startInterview()");
-                }
-            });
+            setResult(RESULT_OK);
+            SurveyActivity.this.finish();
         }
 
         @JavascriptInterface
@@ -112,9 +68,8 @@ public class SurveyActivity extends Activity {
         intent.putExtra(BRAND, brand);
         intent.putExtra(EXPLAINER, explainer);
 
-        activity.startActivity(intent);
+        activity.startActivityForResult(intent, Survey.REQUEST_SHOW_SURVEY);
     }
-
 
     public void createSurveyWall() {
         Log.d(TAG, "loading survey...");
@@ -133,7 +88,7 @@ public class SurveyActivity extends Activity {
             webSettings.setAllowFileAccessFromFileURLs(true);
         }
 
-        mWebView.addJavascriptInterface(new SurveyJavaScriptInterface(this), "survey");
+        mWebView.addJavascriptInterface(new SurveyJavaScriptInterface(this), JS_INTERFACE_NAME);
 
         mWebView.setWebViewClient(new WebViewClient() {
             @Override

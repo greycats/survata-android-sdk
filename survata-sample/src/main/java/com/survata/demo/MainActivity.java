@@ -1,5 +1,6 @@
 package com.survata.demo;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -49,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
         mContainer.setVisibility(View.VISIBLE);
     }
 
-    private void showLoadingSurveyView(){
+    private void showLoadingSurveyView() {
         mProgressBar.setVisibility(View.VISIBLE);
         mCreateSurvey.setVisibility(View.GONE);
         mContainer.setVisibility(View.VISIBLE);
@@ -70,4 +71,11 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == Survey.REQUEST_SHOW_SURVEY) {
+            showFullView();
+        }
+    }
 }

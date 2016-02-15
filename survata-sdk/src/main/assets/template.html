@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script>
 		(function(w, d, t, v) {
 	        w[v] = w[v] || {}; w[v].qr = []; w[v].qf = [];
 	        var got = 0, g = function() {
@@ -21,18 +21,28 @@
 	        w[v].fail = function() { g(); w[v].qf.push(arguments); return w[v]; };
 	        w[v].publisher = "survata-test";
 	    }(window, document, 'script', 'Survata'));
-	</script>
+
+    </script>
 </head>
 <body>
-	<script>
+<script>
 		Survata.ready(function() {
 			var s = Survata.createSurveywall({
 				brand: "",
-				explainer: ""
+				explainer: "",
 				preview: "5fd725139884422e9f1bb28f776c702d"
 			});
+
+			s.on("interviewComplete", function() {
+				Android.onInterviewComplete();
+			});
+
 			s.startInterview();
 		}, true);
-	</script>
+		Survata.fail(function() {
+			Android.onFail();
+		});
+
+</script>
 </body>
 </html>
