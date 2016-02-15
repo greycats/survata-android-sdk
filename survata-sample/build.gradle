@@ -17,6 +17,33 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    signingConfigs {
+        debugConfig {
+            storeFile file("debug.jks")
+            storePassword "survata"
+            keyAlias "com.survata.android"
+            keyPassword "survata"
+        }
+
+        releaseConfig {
+            storeFile file("release.jks")
+            storePassword "survata"
+            keyAlias "com.survata.android"
+            keyPassword "survata"
+        }
+    }
+
+    buildTypes {
+        debug {
+            signingConfig signingConfigs.debugConfig
+        }
+        release {
+            signingConfig signingConfigs.releaseConfig
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
 }
 
 dependencies {
