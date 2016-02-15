@@ -21,34 +21,18 @@
 	        w[v].fail = function() { g(); w[v].qf.push(arguments); return w[v]; };
 	        w[v].publisher = "survata-test";
 	    }(window, document, 'script', 'Survata'));
-		</script>
+	</script>
 </head>
 <body>
-<script>
+	<script>
 		Survata.ready(function() {
 			var s = Survata.createSurveywall({
 				brand: "",
-				explainer: "",
-				//preview: "5fd725139884422e9f1bb28f776c702d"
+				explainer: ""
+				preview: "5fd725139884422e9f1bb28f776c702d"
 			});
-			s.on("load", function(data) {
-				survey.onLoad(data);
-			});
-			s.on("interviewComplete", function() {
-				survey.onInterviewComplete();
-			});
-			s.on("interviewStart", function() {
-				survey.onInterviewStart();
-			});
-			s.on("interviewSkip", function() {
-				survey.onInterviewSkip();
-			});
-			window.startInterview = s.startInterview;
-			survey.onReady();
+			s.startInterview();
 		}, true);
-		Survata.fail(function() {
-			survey.onFail();
-		});
-		</script>
+	</script>
 </body>
 </html>
