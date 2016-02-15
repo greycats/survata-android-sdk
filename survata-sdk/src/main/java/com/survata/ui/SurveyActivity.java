@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
@@ -16,6 +15,7 @@ import android.widget.ProgressBar;
 
 import com.survata.R;
 import com.survata.Survey;
+import com.survata.Util.Logger;
 
 public class SurveyActivity extends Activity {
 
@@ -50,14 +50,14 @@ public class SurveyActivity extends Activity {
 
         @JavascriptInterface
         public void onInterviewComplete() {
-            Log.d(TAG, "The interview is complete.  Here is your premium content.");
+            Logger.d(TAG, "The interview is complete.  Here is your premium content.");
             setResult(RESULT_OK);
             SurveyActivity.this.finish();
         }
 
         @JavascriptInterface
         public void onFail() {
-            Log.d(TAG, "onFail");
+            Logger.d(TAG, "onFail");
             SurveyActivity.this.finish();
         }
     }
@@ -72,7 +72,7 @@ public class SurveyActivity extends Activity {
     }
 
     public void createSurveyWall() {
-        Log.d(TAG, "loading survey...");
+        Logger.d(TAG, "loading survey...");
 
         String publisher = getIntent().getStringExtra(PUBLISHER);
         String brand = getIntent().getStringExtra(BRAND);

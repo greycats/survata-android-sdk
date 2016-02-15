@@ -1,12 +1,12 @@
 package com.survata.network;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.survata.Util.Logger;
 
 import org.json.JSONObject;
 
@@ -30,14 +30,14 @@ public class SurveyRequest extends JsonObjectRequest {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.e(TAG, "onResponse: " + response);
+                        Logger.e(TAG, "onResponse: " + response);
                         surveyListener.onResponse(response);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.e(TAG, "createSurvey error: " + error);
+                        Logger.e(TAG, "createSurvey error: " + error);
                         surveyListener.onErrorResponse(error);
                     }
                 });

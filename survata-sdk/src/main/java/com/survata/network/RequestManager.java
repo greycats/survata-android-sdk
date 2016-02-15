@@ -2,10 +2,10 @@ package com.survata.network;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.survata.Util.Logger;
 
 public abstract class RequestManager {
 
@@ -20,13 +20,13 @@ public abstract class RequestManager {
         mCurrentRequest = createRequest();
 
         if (mCurrentRequest == null) {
-            Log.d(TAG, "mCurrentRequest is null");
+            Logger.d(TAG, "mCurrentRequest is null");
             return;
         }
 
         RequestQueue requestQueue = Networking.getRequestQueue(context);
         if (requestQueue == null) {
-            Log.d(TAG, "RequestQueue is null");
+            Logger.d(TAG, "RequestQueue is null");
             return;
         }
         requestQueue.add(mCurrentRequest);

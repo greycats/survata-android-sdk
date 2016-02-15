@@ -2,10 +2,10 @@ package com.survata;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
+import com.survata.Util.Logger;
 import com.survata.network.RequestManager;
 import com.survata.network.SurveyRequest;
 import com.survata.ui.SurveyActivity;
@@ -48,7 +48,7 @@ public class Survey {
 
 
                                     } catch (JSONException e) {
-                                        Log.d(TAG, "JSONException", e);
+                                        Logger.d(TAG, "JSONException", e);
                                     }
 
                                     if (surveyCheckCallBack != null) {
@@ -64,7 +64,7 @@ public class Survey {
                                 }
                             });
                 } catch (JSONException e) {
-                    Log.d(TAG, "JSONException", e);
+                    Logger.d(TAG, "JSONException", e);
                 }
                 return null;
             }
