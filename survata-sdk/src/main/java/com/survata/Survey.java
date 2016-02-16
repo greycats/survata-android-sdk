@@ -9,6 +9,7 @@ import com.survata.utils.Logger;
 import com.survata.network.RequestManager;
 import com.survata.network.SurveyRequest;
 import com.survata.ui.SurveyActivity;
+import com.survata.utils.Utils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,7 +27,9 @@ public class Survey {
         SurveyActivity.start(activity, publisher, brand, explainer);
     }
 
-    public void create(Context context, final String contentName, final String publisherUuid, final SurveyCheckCallBack surveyCheckCallBack) {
+    public void create(final Context context, final String contentName, final String publisherUuid, final SurveyCheckCallBack surveyCheckCallBack) {
+
+
         RequestManager requestManager = new RequestManager() {
 
             @Override
@@ -39,6 +42,7 @@ public class Survey {
 
                     return new SurveyRequest(Const.CREATE_SURVEY_URL,
                             jsonObject.toString(),
+                            Utils.getUserAgent(context),
                             new SurveyRequest.SurveyListener() {
                                 @Override
                                 public void onResponse(JSONObject response) {

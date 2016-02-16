@@ -17,13 +17,17 @@ public class SurveyRequest extends JsonObjectRequest {
 
     private static final String TAG = "SurveyRequest";
 
-    public interface SurveyListener{
+    private String mUserAgent;
+
+    public interface SurveyListener {
         void onResponse(JSONObject response);
+
         void onErrorResponse(VolleyError error);
     }
 
     public SurveyRequest(@NonNull String url,
                          @NonNull String requestBody,
+                         @NonNull String userAgent,
                          final SurveyListener surveyListener) {
         super(Method.POST, url,
                 requestBody,
@@ -41,13 +45,14 @@ public class SurveyRequest extends JsonObjectRequest {
                         surveyListener.onErrorResponse(error);
                     }
                 });
+        mUserAgent = userAgent;
     }
 
     @Override
     public Map<String, String> getHeaders() throws AuthFailureError {
         Map<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/javascript");
-
+        headers.put("User-Agent", mUserAgent);
         return headers;
     }
 }
