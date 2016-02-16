@@ -33,10 +33,23 @@
 				preview: "5fd725139884422e9f1bb28f776c702d"
 			});
 
+	        s.on("load", function(data) {
+				Android.onSurveyLoaded(data);
+			});
+
+            s.on("interviewStart", function() {
+                Android.onInterviewStart();
+			});
+
+			s.on("interviewSkip", function() {
+                Android.onInterviewSkip();
+			});
+
 			s.on("interviewComplete", function() {
 				Android.onInterviewComplete();
 			});
 
+            Android.onSurveyReady();
 			s.startInterview();
 		}, true);
 		Survata.fail(function() {

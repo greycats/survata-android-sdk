@@ -49,8 +49,28 @@ public class SurveyActivity extends Activity {
         }
 
         @JavascriptInterface
+        public void onSurveyLoaded(String data) {
+            Logger.d(TAG, "survey loaded");
+        }
+
+        @JavascriptInterface
+        public void onSurveyReady() {
+            Logger.d(TAG, "survey ready");
+        }
+
+        @JavascriptInterface
+        public void onInterviewStart() {
+            Logger.d(TAG, "The interview is start.");
+        }
+
+        @JavascriptInterface
+        public void onInterviewSkip() {
+            Logger.d(TAG, "The interview is skip.");
+        }
+
+        @JavascriptInterface
         public void onInterviewComplete() {
-            Logger.d(TAG, "The interview is complete.  Here is your premium content.");
+            Logger.d(TAG, "The interview is complete");
             setResult(RESULT_OK);
             SurveyActivity.this.finish();
         }

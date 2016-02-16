@@ -51,6 +51,12 @@ public class Survey {
                                         Logger.d(TAG, "JSONException", e);
                                     }
 
+                                    if (valid) {
+                                        Logger.d(TAG, "has available survey");
+                                    } else {
+                                        Logger.d(TAG, "no survey available");
+                                    }
+
                                     if (surveyCheckCallBack != null) {
                                         surveyCheckCallBack.onCheckValid(valid);
                                     }
@@ -58,6 +64,9 @@ public class Survey {
 
                                 @Override
                                 public void onErrorResponse(VolleyError error) {
+
+                                    Logger.d(TAG, "error", error);
+
                                     if (surveyCheckCallBack != null) {
                                         surveyCheckCallBack.onCheckValid(false);
                                     }

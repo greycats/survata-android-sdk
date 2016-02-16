@@ -159,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements ShakeDetector.Lis
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == Survey.REQUEST_SHOW_SURVEY) {
+        if (requestCode == Survey.REQUEST_SHOW_SURVEY && resultCode == RESULT_OK) {
             showFullView();
         }
     }
