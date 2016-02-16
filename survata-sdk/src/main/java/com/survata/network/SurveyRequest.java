@@ -47,6 +47,7 @@ public class SurveyRequest extends JsonObjectRequest {
     public Map<String, String> getHeaders() throws AuthFailureError {
         Map<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/javascript");
+
         return headers;
     }
 }
