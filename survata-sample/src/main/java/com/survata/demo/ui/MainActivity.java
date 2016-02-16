@@ -13,6 +13,7 @@ import android.widget.ProgressBar;
 
 import com.squareup.seismic.ShakeDetector;
 import com.survata.Survey;
+import com.survata.Util.Logger;
 import com.survata.demo.R;
 
 public class MainActivity extends AppCompatActivity implements ShakeDetector.Listener {
@@ -41,6 +42,58 @@ public class MainActivity extends AppCompatActivity implements ShakeDetector.Lis
 
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
         mContainer = (ViewGroup) findViewById(R.id.container);
+
+        mSurvey.setSurveyDebugLog(new Logger.SurveyDebugLog() {
+            @Override
+            public void surveyLogV(String tag, String msg) {
+
+            }
+
+            @Override
+            public void surveyLogV(String tag, String msg, Throwable tr) {
+
+            }
+
+            @Override
+            public void surveyLogD(String tag, String msg) {
+
+            }
+
+            @Override
+            public void surveyLogD(String tag, String msg, Throwable tr) {
+
+            }
+
+            @Override
+            public void surveyLogI(String tag, String msg) {
+
+            }
+
+            @Override
+            public void surveyLogI(String tag, String msg, Throwable tr) {
+
+            }
+
+            @Override
+            public void surveyLogW(String tag, String msg) {
+
+            }
+
+            @Override
+            public void surveyLogW(String tag, String msg, Throwable tr) {
+
+            }
+
+            @Override
+            public void surveyLogE(String tag, String msg) {
+
+            }
+
+            @Override
+            public void surveyLogE(String tag, String msg, Throwable tr) {
+
+            }
+        });
 
         startShakeDetector();
         checkSurvey();

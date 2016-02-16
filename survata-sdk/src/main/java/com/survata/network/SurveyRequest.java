@@ -30,14 +30,14 @@ public class SurveyRequest extends JsonObjectRequest {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Logger.e(TAG, "onResponse: " + response);
+                        Logger.d(TAG, "onResponse: " + response);
                         surveyListener.onResponse(response);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Logger.e(TAG, "createSurvey error: " + error);
+                        Logger.d(TAG, "createSurvey error: " + error);
                         surveyListener.onErrorResponse(error);
                     }
                 });

@@ -73,4 +73,9 @@ public class Survey {
         requestManager.makeRequest(context);
     }
 
+
+    public void setSurveyDebugLog(Logger.SurveyDebugLog surveyDebugLog) {
+        Logger.setSurveyDebugLog(surveyDebugLog);
+    }
+
 }
