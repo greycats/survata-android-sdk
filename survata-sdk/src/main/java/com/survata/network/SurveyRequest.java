@@ -6,7 +6,7 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.survata.Util.Logger;
+import com.survata.utils.Logger;
 
 import org.json.JSONObject;
 

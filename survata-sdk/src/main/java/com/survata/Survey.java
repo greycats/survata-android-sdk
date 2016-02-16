@@ -5,7 +5,7 @@ import android.content.Context;
 
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
-import com.survata.Util.Logger;
+import com.survata.utils.Logger;
 import com.survata.network.RequestManager;
 import com.survata.network.SurveyRequest;
 import com.survata.ui.SurveyActivity;

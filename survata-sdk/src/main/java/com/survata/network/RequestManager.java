@@ -5,7 +5,7 @@ import android.support.annotation.Nullable;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.survata.Util.Logger;
+import com.survata.utils.Logger;
 
 public abstract class RequestManager {
 

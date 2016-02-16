@@ -13,7 +13,7 @@ import android.widget.ProgressBar;
 
 import com.squareup.seismic.ShakeDetector;
 import com.survata.Survey;
-import com.survata.Util.Logger;
+import com.survata.utils.Logger;
 import com.survata.demo.R;
 
 public class MainActivity extends AppCompatActivity implements ShakeDetector.Listener {

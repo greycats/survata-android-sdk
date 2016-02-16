@@ -15,7 +15,7 @@ import android.widget.ProgressBar;
 
 import com.survata.R;
 import com.survata.Survey;
-import com.survata.Util.Logger;
+import com.survata.utils.Logger;
 
 public class SurveyActivity extends Activity {
 

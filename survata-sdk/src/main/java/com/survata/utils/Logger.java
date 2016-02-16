@@ -1,4 +1,4 @@
-package com.survata.Util;
+package com.survata.utils;
 
 import android.util.Log;
 
