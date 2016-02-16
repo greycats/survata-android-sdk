@@ -52,6 +52,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.squareup:seismic:1.0.2'
 
+//    compile 'com.survata:survata-sdk:1.0.1'
 
     releaseCompile project(path: ':survata-sdk', configuration: 'release')
     debugCompile project(path: ':survata-sdk', configuration: 'debug')
