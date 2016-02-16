@@ -1,11 +1,16 @@
 package com.survata.demo.ui;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.hardware.SensorManager;
+import android.location.Location;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -13,8 +18,9 @@ import android.widget.ProgressBar;
 
 import com.squareup.seismic.ShakeDetector;
 import com.survata.Survey;
-import com.survata.utils.Logger;
 import com.survata.demo.R;
+import com.survata.demo.util.LocationTracker;
+import com.survata.utils.Logger;
 
 public class MainActivity extends AppCompatActivity implements ShakeDetector.Listener {
 
@@ -25,6 +31,7 @@ public class MainActivity extends AppCompatActivity implements ShakeDetector.Lis
     private Survey mSurvey = new Survey();
     private ShakeDetector mShakeDetector;
     private AlertDialog mAlertDialog;
+    private LocationTracker mLocationTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,7 +103,38 @@ public class MainActivity extends AppCompatActivity implements ShakeDetector.Lis
         });
 
         startShakeDetector();
-        checkSurvey();
+
+        // check survey with location
+        checkSurveyWithLocation();
+    }
+
+    private void checkSurveyWithLocation() {
+        // show loading default
+        showLoadingSurveyView();
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // You need to ask the user to enable the permissions
+            Log.e(TAG, "need permission");
+        } else {
+            mLocationTracker = new LocationTracker(this) {
+                @Override
+                public void onLocationFound(Location location) {
+                    Log.e(TAG, "onLocationFound " + location);
+                    mLocationTracker.stopListening();
+
+                    checkSurvey(location);
+                }
+
+                @Override
+                public void onTimeout() {
+                    Log.e(TAG, "onTimeout");
+
+                    checkSurvey(null);
+                }
+            };
+            mLocationTracker.startListening();
+        }
     }
 
     @Override
@@ -141,19 +179,29 @@ public class MainActivity extends AppCompatActivity implements ShakeDetector.Lis
         mContainer.setVisibility(View.VISIBLE);
     }
 
-    private void checkSurvey() {
-        showLoadingSurveyView();
+    private void checkSurvey(Location location) {
+        String postalCode = "";
 
-        mSurvey.create(this, "https://www.survata.com/publisher-demos/internal/", "survata-test", new Survey.SurveyCheckCallBack() {
-            @Override
-            public void onCheckValid(boolean valid) {
-                if (valid) {
-                    showCreateSurveyWallButton();
-                } else {
-                    showFullView();
-                }
-            }
-        });
+        if (location != null) {
+            postalCode = mLocationTracker.getPostalCode(this, location);
+        }
+
+        mSurvey.create(this,
+                "https://www.survata.com/publisher-demos/internal/",
+                "survata-test",
+                postalCode,
+                new Survey.SurveyCheckCallBack() {
+                    @Override
+                    public void onCheckValid(boolean valid) {
+
+                        Log.d(TAG, "check survey result: " + valid);
+                        if (valid) {
+                            showCreateSurveyWallButton();
+                        } else {
+                            showFullView();
+                        }
+                    }
+                });
     }
 
     @Override
@@ -174,7 +222,7 @@ public class MainActivity extends AppCompatActivity implements ShakeDetector.Lis
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     dialog.dismiss();
-                                    checkSurvey();
+                                    checkSurveyWithLocation();
                                 }
                             })
                     .setNegativeButton(R.string.cancel,

@@ -27,7 +27,11 @@ public class Survey {
         SurveyActivity.start(activity, publisher, brand, explainer);
     }
 
-    public void create(final Context context, final String contentName, final String publisherUuid, final SurveyCheckCallBack surveyCheckCallBack) {
+    public void create(final Context context,
+                       final String contentName,
+                       final String publisherUuid,
+                       final String postalCode,
+                       final SurveyCheckCallBack surveyCheckCallBack) {
 
 
         RequestManager requestManager = new RequestManager() {
@@ -39,8 +43,9 @@ public class Survey {
                     JSONObject jsonObject = new JSONObject();
                     jsonObject.put("contentName", contentName);
                     jsonObject.put("publisherUuid", publisherUuid);
+                    jsonObject.put("postalCode", postalCode);
 
-                    return new SurveyRequest(Const.CREATE_SURVEY_URL,
+                    return new SurveyRequest(Api.CREATE_SURVEY_URL,
                             jsonObject.toString(),
                             Utils.getUserAgent(context),
                             new SurveyRequest.SurveyListener() {
