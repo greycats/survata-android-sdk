@@ -16,17 +16,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.webkit.JavascriptInterface;
-import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.survata.R;
 import com.survata.Survey;
 import com.survata.utils.Logger;
+import com.survata.utils.Utils;
 
 public class SurveyDialogFragment extends DialogFragment {
 
@@ -208,6 +207,13 @@ public class SurveyDialogFragment extends DialogFragment {
             }
         });
 
-        mWebView.loadUrl("file:///android_asset/template.html");
+        String html = Utils.getFromAssets("template.html", getActivity());
+
+        String data = html.replace("[PUBLISHER_ID]", mPublisher)
+                .replace("[BRAND]", mBrand)
+                .replace("[EXPLAINER]", mExplainer)
+                .replace("[LOADER_BASE64]", Utils.encodeImage(getActivity(), "circles_large.gif"));
+
+        mWebView.loadDataWithBaseURL("https://www.survata.com", data, "text/html", "utf-8", null);
     }
 }

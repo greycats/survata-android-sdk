@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
         #loader {
-        background: #ffffff url('file:///android_asset/circles_large.gif') no-repeat center center;
+        background: #ffffff url('data:image/gif;base64,[LOADER_BASE64]') no-repeat center center;
         position: absolute;
         width:100%;
         height: 100%;
@@ -27,7 +27,7 @@
 	        };
 	        w[v].ready = function() { g(); w[v].qr.push(arguments); return w[v]; };
 	        w[v].fail = function() { g(); w[v].qf.push(arguments); return w[v]; };
-	        w[v].publisher = "survata-test";
+	        w[v].publisher = "[PUBLISHER_ID]";
 	    }(window, document, 'script', 'Survata'));
 
     </script>
@@ -37,8 +37,8 @@
 <script>
 		Survata.ready(function() {
 			var s = Survata.createSurveywall({
-				brand: "",
-				explainer: "",
+				brand: "[BRAND]",
+				explainer: "[EXPLAINER]",
 				preview: "5fd725139884422e9f1bb28f776c702d"
 			});
 
