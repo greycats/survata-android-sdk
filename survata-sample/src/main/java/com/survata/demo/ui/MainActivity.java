@@ -19,6 +19,7 @@ import android.widget.ProgressBar;
 import com.squareup.seismic.ShakeDetector;
 import com.survata.Survey;
 import com.survata.demo.R;
+import com.survata.demo.util.HockeyHelper;
 import com.survata.demo.util.LocationTracker;
 import com.survata.utils.Logger;
 
@@ -106,6 +107,20 @@ public class MainActivity extends AppCompatActivity implements ShakeDetector.Lis
 
         // check survey with location
         checkSurveyWithLocation();
+
+        HockeyHelper.checkForUpdates(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        HockeyHelper.checkForCrashes(this);
+    }
+
+    @Override
+    protected void onPause() {
+        HockeyHelper.unregisterUpdate();
+        super.onPause();
     }
 
     private void checkSurveyWithLocation() {
@@ -116,6 +131,7 @@ public class MainActivity extends AppCompatActivity implements ShakeDetector.Lis
                 && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // You need to ask the user to enable the permissions
             Log.e(TAG, "need permission");
+            checkSurvey(null);
         } else {
             mLocationTracker = new LocationTracker(this) {
                 @Override
