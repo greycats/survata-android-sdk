@@ -10,6 +10,8 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,6 +45,8 @@ public class SurveyDialogFragment extends DialogFragment {
     private String mExplainer;
 
     private Survey.SurveyStatusListener mSurveyStatusListener;
+
+    private Handler mHandler = new Handler(Looper.getMainLooper());
 
     public void setSurveyStatusListener(Survey.SurveyStatusListener surveyStatusListener) {
         mSurveyStatusListener = surveyStatusListener;
@@ -132,10 +136,7 @@ public class SurveyDialogFragment extends DialogFragment {
             if (!TextUtils.isEmpty(data) && data.equals("monetizable")) {
 
             } else {
-
-                if (mSurveyStatusListener != null) {
-                    mSurveyStatusListener.onResult(Survey.SurveyResult.CREDIT_EARNED);
-                }
+                updateResult(Survey.SurveyResult.CREDIT_EARNED);
             }
         }
 
@@ -143,46 +144,53 @@ public class SurveyDialogFragment extends DialogFragment {
         public void onSurveyReady() {
             Logger.d(TAG, "survey ready");
 
-            if (mSurveyStatusListener != null) {
-                mSurveyStatusListener.onResult(Survey.SurveyResult.READY);
-            }
+            updateResult(Survey.SurveyResult.READY);
         }
 
         @JavascriptInterface
         public void onInterviewStart() {
             Logger.d(TAG, "The interview is start.");
 
-            if (mSurveyStatusListener != null) {
-                mSurveyStatusListener.onResult(Survey.SurveyResult.STARTED);
-            }
+            updateResult(Survey.SurveyResult.STARTED);
         }
 
         @JavascriptInterface
         public void onInterviewSkip() {
             Logger.d(TAG, "The interview is skip.");
 
-            if (mSurveyStatusListener != null) {
-                mSurveyStatusListener.onResult(Survey.SurveyResult.SKIPPED);
-            }
+            updateResult(Survey.SurveyResult.SKIPPED);
         }
 
         @JavascriptInterface
         public void onInterviewComplete() {
             Logger.d(TAG, "The interview is complete");
 
-            if (mSurveyStatusListener != null) {
-                mSurveyStatusListener.onResult(Survey.SurveyResult.COMPLETED);
-            }
+            updateResult(Survey.SurveyResult.COMPLETED);
         }
 
         @JavascriptInterface
         public void onFail() {
             Logger.d(TAG, "onFail");
 
-            if (mSurveyStatusListener != null) {
-                mSurveyStatusListener.onResult(Survey.SurveyResult.FAILED);
-            }
+            updateResult(Survey.SurveyResult.FAILED);
         }
+    }
+
+    private void updateResult(final Survey.SurveyResult surveyResult) {
+
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+
+                if (surveyResult == Survey.SurveyResult.COMPLETED) {
+                    dismissSurveyDialog();
+                }
+
+                if (mSurveyStatusListener != null) {
+                    mSurveyStatusListener.onResult(surveyResult);
+                }
+            }
+        });
     }
 
     public void createSurveyWall() {
