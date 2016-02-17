@@ -1,7 +1,6 @@
 package com.survata.network;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -11,7 +10,6 @@ public abstract class RequestManager {
 
     private static final String TAG = "RequestManager";
 
-    @Nullable
     protected Request<?> mCurrentRequest;
 
     public abstract Request createRequest();

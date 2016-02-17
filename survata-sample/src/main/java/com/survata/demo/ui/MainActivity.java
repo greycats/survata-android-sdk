@@ -42,17 +42,7 @@ public class MainActivity extends AppCompatActivity implements ShakeDetector.Lis
         mCreateSurvey.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                mSurvey.createSurveyWall(MainActivity.this, "survata-test", "", "", new Survey.SurveyStatusListener() {
-                    @Override
-                    public void onResult(Survey.SurveyResult surveyResult) {
-                        Log.d(TAG, "surveyResult: " + surveyResult);
-
-                        if (surveyResult == Survey.SurveyResult.COMPLETED) {
-                            showFullView();
-                        }
-                    }
-                });
+                showSurvey();
             }
         });
 
@@ -114,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements ShakeDetector.Lis
         startShakeDetector();
 
         // check survey with location
-        checkSurveyWithLocation();
+        checkSurvey();
 
         HockeyHelper.checkForUpdates(this);
     }
@@ -131,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements ShakeDetector.Lis
         super.onPause();
     }
 
-    private void checkSurveyWithLocation() {
+    private void checkSurvey() {
         // show loading default
         showLoadingSurveyView();
 
@@ -159,6 +149,19 @@ public class MainActivity extends AppCompatActivity implements ShakeDetector.Lis
             };
             mLocationTracker.startListening();
         }
+    }
+
+    private void showSurvey() {
+        mSurvey.createSurveyWall(MainActivity.this, "survata-test", "", "", new Survey.SurveyStatusListener() {
+            @Override
+            public void onResult(Survey.SurveyResult surveyResult) {
+                Log.d(TAG, "surveyResult: " + surveyResult);
+
+                if (surveyResult == Survey.SurveyResult.COMPLETED) {
+                    showFullView();
+                }
+            }
+        });
     }
 
     @Override
@@ -237,7 +240,7 @@ public class MainActivity extends AppCompatActivity implements ShakeDetector.Lis
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     dialog.dismiss();
-                                    checkSurveyWithLocation();
+                                    checkSurvey();
                                 }
                             })
                     .setNegativeButton(R.string.cancel,

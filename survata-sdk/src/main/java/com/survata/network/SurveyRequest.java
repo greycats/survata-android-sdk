@@ -1,7 +1,5 @@
 package com.survata.network;
 
-import android.support.annotation.NonNull;
-
 import com.android.volley.AuthFailureError;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -25,9 +23,9 @@ public class SurveyRequest extends JsonObjectRequest {
         void onErrorResponse(VolleyError error);
     }
 
-    public SurveyRequest(@NonNull String url,
-                         @NonNull String requestBody,
-                         @NonNull String userAgent,
+    public SurveyRequest(String url,
+                         String requestBody,
+                         String userAgent,
                          final SurveyListener surveyListener) {
         super(Method.POST, url,
                 requestBody,
