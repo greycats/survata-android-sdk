@@ -3,7 +3,6 @@ package com.survata.demo.ui;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.SensorManager;
 import android.location.Location;
@@ -44,7 +43,16 @@ public class MainActivity extends AppCompatActivity implements ShakeDetector.Lis
             @Override
             public void onClick(View v) {
 
-                mSurvey.createSurveyWall(MainActivity.this, "survata-test", "", "");
+                mSurvey.createSurveyWall(MainActivity.this, "survata-test", "", "", new Survey.SurveyStatusListener() {
+                    @Override
+                    public void onResult(Survey.SurveyResult surveyResult) {
+                        Log.d(TAG, "surveyResult: " + surveyResult);
+
+                        if (surveyResult == Survey.SurveyResult.COMPLETED) {
+                            showFullView();
+                        }
+                    }
+                });
             }
         });
 
@@ -206,26 +214,17 @@ public class MainActivity extends AppCompatActivity implements ShakeDetector.Lis
                 "https://www.survata.com/publisher-demos/internal/",
                 "survata-test",
                 postalCode,
-                new Survey.SurveyCheckCallBack() {
+                new Survey.SurveyAvailabilityListener() {
                     @Override
-                    public void onCheckValid(boolean valid) {
-
-                        Log.d(TAG, "check survey result: " + valid);
-                        if (valid) {
+                    public void onSurveyAvailable(Survey.SurveyAvailability surveyAvailability) {
+                        Log.d(TAG, "check survey result: " + surveyAvailability);
+                        if (surveyAvailability == Survey.SurveyAvailability.AVAILABILITY) {
                             showCreateSurveyWallButton();
                         } else {
                             showFullView();
                         }
                     }
                 });
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == Survey.REQUEST_SHOW_SURVEY && resultCode == RESULT_OK) {
-            showFullView();
-        }
     }
 
     @Override

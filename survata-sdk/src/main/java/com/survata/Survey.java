@@ -1,14 +1,15 @@
 package com.survata;
 
 import android.app.Activity;
+import android.app.FragmentTransaction;
 import android.content.Context;
 
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
-import com.survata.utils.Logger;
 import com.survata.network.RequestManager;
 import com.survata.network.SurveyRequest;
-import com.survata.ui.SurveyActivity;
+import com.survata.ui.SurveyDialogFragment;
+import com.survata.utils.Logger;
 import com.survata.utils.Utils;
 
 import org.json.JSONException;
@@ -19,19 +20,49 @@ public class Survey {
 
     public static final int REQUEST_SHOW_SURVEY = 2016;
 
-    public interface SurveyCheckCallBack {
-        void onCheckValid(boolean valid);
+    public interface SurveyAvailabilityListener {
+        void onSurveyAvailable(SurveyAvailability surveyAvailability);
     }
 
-    public void createSurveyWall(Activity activity, String publisher, String brand, String explainer) {
-        SurveyActivity.start(activity, publisher, brand, explainer);
+    public interface SurveyStatusListener {
+        void onResult(SurveyResult surveyResult);
+    }
+
+    public enum SurveyAvailability {
+        AVAILABILITY,
+        NOT_AVAILABLE,
+        SERVER_ERROR,
+        NETWORK_NOT_AVAILABLE
+    }
+
+    public enum SurveyResult {
+        READY,
+        STARTED,
+        COMPLETED,
+        SKIPPED,
+        CANCELED,
+        CREDIT_EARNED,
+        FAILED,
+        NETWORK_NOT_AVAILABLE
+    }
+
+    public void createSurveyWall(Activity activity, String publisher, String brand, String explainer, SurveyStatusListener surveyStatusListener) {
+        SurveyDialogFragment dialogFragment = SurveyDialogFragment.newInstance(publisher, brand, explainer);
+        dialogFragment.dismissSurveyDialog();
+
+        FragmentTransaction ft = activity.getFragmentManager().beginTransaction();
+        dialogFragment.show(ft, SurveyDialogFragment.TAG);
+
+        if (surveyStatusListener != null) {
+            dialogFragment.setSurveyStatusListener(surveyStatusListener);
+        }
     }
 
     public void create(final Context context,
                        final String contentName,
                        final String publisherUuid,
                        final String postalCode,
-                       final SurveyCheckCallBack surveyCheckCallBack) {
+                       final SurveyAvailabilityListener surveyAvailabilityListener) {
 
 
         RequestManager requestManager = new RequestManager() {
@@ -54,8 +85,6 @@ public class Survey {
                                     boolean valid = false;
                                     try {
                                         valid = response.getBoolean("valid");
-
-
                                     } catch (JSONException e) {
                                         Logger.d(TAG, "JSONException", e);
                                     }
@@ -66,8 +95,9 @@ public class Survey {
                                         Logger.d(TAG, "no survey available");
                                     }
 
-                                    if (surveyCheckCallBack != null) {
-                                        surveyCheckCallBack.onCheckValid(valid);
+                                    if (surveyAvailabilityListener != null) {
+                                        SurveyAvailability surveyAvailability = valid ? SurveyAvailability.AVAILABILITY : SurveyAvailability.NOT_AVAILABLE;
+                                        surveyAvailabilityListener.onSurveyAvailable(surveyAvailability);
                                     }
                                 }
 
@@ -76,8 +106,8 @@ public class Survey {
 
                                     Logger.d(TAG, "error", error);
 
-                                    if (surveyCheckCallBack != null) {
-                                        surveyCheckCallBack.onCheckValid(false);
+                                    if (surveyAvailabilityListener != null) {
+                                        surveyAvailabilityListener.onSurveyAvailable(SurveyAvailability.SERVER_ERROR);
                                     }
                                 }
                             });

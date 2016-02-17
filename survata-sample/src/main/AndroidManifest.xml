@@ -26,10 +26,6 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name="com.survata.ui.SurveyActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"></activity>
-
         <activity android:name="net.hockeyapp.android.UpdateActivity" />
     </application>
 
