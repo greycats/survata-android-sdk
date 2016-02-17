@@ -3,6 +3,14 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        #loader {
+        background: #ffffff url('file:///android_asset/circles_large.gif') no-repeat center center;
+        position: absolute;
+        width:100%;
+        height: 100%;
+        }
+    </style>
     <script>
 		(function(w, d, t, v) {
 	        w[v] = w[v] || {}; w[v].qr = []; w[v].qf = [];
@@ -25,6 +33,7 @@
     </script>
 </head>
 <body>
+<div id="loader"/>
 <script>
 		Survata.ready(function() {
 			var s = Survata.createSurveywall({
@@ -34,6 +43,8 @@
 			});
 
 	        s.on("load", function(data) {
+	        	var loader = document.getElementById("loader");
+				loader.setAttribute("style", "display:none;");
 				Android.onSurveyLoaded(data);
 			});
 

@@ -37,7 +37,6 @@ public class SurveyDialogFragment extends DialogFragment {
     private static final String JS_INTERFACE_NAME = "Android";
 
     private WebView mWebView;
-    private ProgressBar mLoadingProgressBar;
     private ImageView mCloseImage;
 
     private String mPublisher;
@@ -96,7 +95,6 @@ public class SurveyDialogFragment extends DialogFragment {
 
         mWebView = (WebView) view.findViewById(R.id.web_view);
         mWebView.setVerticalScrollBarEnabled(false);
-        mLoadingProgressBar = (ProgressBar) view.findViewById(R.id.loading);
         mCloseImage = (ImageView) view.findViewById(R.id.close);
 
         mCloseImage.setOnClickListener(new View.OnClickListener() {
@@ -207,17 +205,6 @@ public class SurveyDialogFragment extends DialogFragment {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 return false;
-            }
-        });
-
-        mWebView.setWebChromeClient(new WebChromeClient() {
-            @Override
-            public void onProgressChanged(WebView view, int newProgress) {
-                if (newProgress == 100) {
-                    mLoadingProgressBar.setVisibility(View.GONE);
-                } else {
-                    mLoadingProgressBar.setVisibility(View.VISIBLE);
-                }
             }
         });
 
