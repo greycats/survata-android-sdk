@@ -232,7 +232,7 @@ public class MainActivity extends AppCompatActivity implements ShakeDetector.Lis
 
     @Override
     public void hearShake() {
-        if (null == mAlertDialog || null != mAlertDialog && !mAlertDialog.isShowing()) {
+        if (mAlertDialog == null || null != mAlertDialog && !mAlertDialog.isShowing()) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this)
                     .setMessage(R.string.reset_data)
                     .setPositiveButton(R.string.ok,

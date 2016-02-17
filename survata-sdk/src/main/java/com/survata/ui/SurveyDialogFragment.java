@@ -74,7 +74,7 @@ public class SurveyDialogFragment extends DialogFragment {
 
         FragmentTransaction ft = activity.getFragmentManager().beginTransaction();
         Fragment fragment = activity.getFragmentManager().findFragmentByTag(SurveyDialogFragment.TAG);
-        if (null != fragment) {
+        if (fragment != null) {
             ft.remove(fragment).commit();
         }
     }

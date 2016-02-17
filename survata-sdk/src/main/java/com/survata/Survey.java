@@ -86,7 +86,7 @@ public class Survey {
                                     try {
                                         valid = response.getBoolean("valid");
                                     } catch (JSONException e) {
-                                        Logger.d(TAG, "JSONException", e);
+                                        Logger.e(TAG, "parse json failed", e);
                                     }
 
                                     if (valid) {
@@ -104,7 +104,7 @@ public class Survey {
                                 @Override
                                 public void onErrorResponse(VolleyError error) {
 
-                                    Logger.d(TAG, "error", error);
+                                    Logger.d(TAG, "check survey availability failed", error);
 
                                     if (surveyAvailabilityListener != null) {
                                         surveyAvailabilityListener.onSurveyAvailable(SurveyAvailability.SERVER_ERROR);
@@ -112,7 +112,7 @@ public class Survey {
                                 }
                             });
                 } catch (JSONException e) {
-                    Logger.d(TAG, "JSONException", e);
+                    Logger.e(TAG, "put json object failed", e);
                 }
                 return null;
             }

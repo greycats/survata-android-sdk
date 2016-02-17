@@ -2,6 +2,7 @@ package com.survata.utils;
 
 import android.content.Context;
 import android.util.Base64;
+import android.util.Log;
 
 import com.survata.R;
 
@@ -29,7 +30,7 @@ public class Utils {
             packageName = context.getPackageName();
             versionName = context.getPackageManager().getPackageInfo(packageName, 0).versionName;
         } catch (Exception e) {
-            Logger.d(TAG, "exception", e);
+            Logger.e(TAG, "get user agent failed", e);
         }
 
         String currentUserAgent = context.getString(R.string.app_name) + "/" + packageName;
@@ -46,14 +47,14 @@ public class Utils {
             byte[] encode = Base64.encode(bytes, Base64.NO_WRAP);
             encodeString = new String(encode);
         } catch (IOException e) {
-            Logger.d(TAG, "encodeImage", e);
+            Logger.e(TAG, "encode image failed", e);
         } finally {
             try {
                 if (inputStream != null) {
                     inputStream.close();
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                Logger.e(TAG, "close InputStream failed", e);
             }
         }
 
@@ -105,14 +106,14 @@ public class Utils {
                 sb.append(line);
             }
         } catch (Exception e) {
-            Logger.d(TAG, "getFromAssets", e);
+            Logger.e(TAG, "get from assets failed", e);
         } finally {
             try {
                 if (reader != null) {
                     reader.close();
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.e(TAG, "close BufferedReader failed", e);
             }
         }
 

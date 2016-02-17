@@ -15,7 +15,7 @@
             android:id="@+id/nav_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/white">
+            android:background="@color/nav_bar_bg">
 
             <ImageView
                 android:id="@+id/close"
