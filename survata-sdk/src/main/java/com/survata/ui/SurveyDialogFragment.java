@@ -54,6 +54,7 @@ public class SurveyDialogFragment extends DialogFragment {
 
     public static SurveyDialogFragment newInstance(String publisher, String brand, String explainer) {
         SurveyDialogFragment dialogFragment = new SurveyDialogFragment();
+        dialogFragment.setStyle( DialogFragment.STYLE_NORMAL, R.style.CustomDialog );
         Bundle bundle = new Bundle();
         bundle.putString(PUBLISHER, publisher);
         bundle.putString(BRAND, brand);
@@ -114,9 +115,9 @@ public class SurveyDialogFragment extends DialogFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        Window window = getDialog().getWindow();
-        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        window.setLayout(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+//        Window window = getDialog().getWindow();
+//        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+//        window.setLayout(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
 
         createSurveyWall();
     }
