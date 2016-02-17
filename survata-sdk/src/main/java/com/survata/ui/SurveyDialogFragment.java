@@ -39,6 +39,7 @@ public class SurveyDialogFragment extends DialogFragment {
 
     private WebView mWebView;
     private ProgressBar mLoadingProgressBar;
+    private ImageView mCloseImage;
 
     private String mPublisher;
     private String mBrand;
@@ -98,6 +99,14 @@ public class SurveyDialogFragment extends DialogFragment {
         mWebView = (WebView) view.findViewById(R.id.web_view);
         mWebView.setVerticalScrollBarEnabled(false);
         mLoadingProgressBar = (ProgressBar) view.findViewById(R.id.loading);
+        mCloseImage = (ImageView) view.findViewById(R.id.close);
+
+        mCloseImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismissSurveyDialog();
+            }
+        });
 
         return view;
     }
