@@ -2,6 +2,7 @@ package com.survata.demo.util;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -11,6 +12,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresPermission;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
 import java.io.IOException;
@@ -36,13 +38,19 @@ public abstract class LocationTracker implements LocationListener {
         this.mLocationManagerService = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 
         if (sLocation == null) {
-            LocationTracker.sLocation = mLocationManagerService.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if (checkPermission()) {
+                LocationTracker.sLocation = mLocationManagerService.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            }
         }
         if (sLocation == null) {
-            LocationTracker.sLocation = mLocationManagerService.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            if (checkPermission()) {
+                LocationTracker.sLocation = mLocationManagerService.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            }
         }
         if (sLocation == null) {
-            LocationTracker.sLocation = mLocationManagerService.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+            if (checkPermission()) {
+                LocationTracker.sLocation = mLocationManagerService.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+            }
         }
     }
 
@@ -51,19 +59,19 @@ public abstract class LocationTracker implements LocationListener {
         if (!mIsListening) {
             Log.i(TAG, "startListening");
             // Listen for GPS Updates
-            if (isGpsProviderEnabled(mContext)) {
+            if (isGpsProviderEnabled(mContext) && checkPermission()) {
                 mLocationManagerService.requestLocationUpdates(LocationManager.GPS_PROVIDER, DEFAULT_MIN_TIME_BETWEEN_UPDATES, DEFAULT_MIN_METERS_BETWEEN_UPDATES, this);
             } else {
                 Log.d(TAG, "gps is not enabled");
             }
             // Listen for Network Updates
-            if (isNetworkProviderEnabled(mContext)) {
+            if (isNetworkProviderEnabled(mContext) && checkPermission()) {
                 mLocationManagerService.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, DEFAULT_MIN_TIME_BETWEEN_UPDATES, DEFAULT_MIN_METERS_BETWEEN_UPDATES, this);
             } else {
                 Log.d(TAG, "network is not enabled");
             }
             // Listen for Passive Updates
-            if (isPassiveProviderEnabled(mContext)) {
+            if (isPassiveProviderEnabled(mContext) && checkPermission()) {
                 mLocationManagerService.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, DEFAULT_MIN_TIME_BETWEEN_UPDATES, DEFAULT_MIN_METERS_BETWEEN_UPDATES, this);
             } else {
                 Log.d(TAG, "passive is not enabled");
@@ -86,7 +94,9 @@ public abstract class LocationTracker implements LocationListener {
 
     public final void stopListening() {
         if (mIsListening) {
-            mLocationManagerService.removeUpdates(this);
+            if (checkPermission()) {
+                mLocationManagerService.removeUpdates(this);
+            }
             mIsListening = false;
         }
     }
@@ -133,6 +143,11 @@ public abstract class LocationTracker implements LocationListener {
     private static boolean isProviderEnabled(@NonNull Context context, @NonNull String provider) {
         final LocationManager manager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         return manager.isProviderEnabled(provider);
+    }
+
+    private boolean checkPermission() {
+        return !(ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED);
     }
 
     public String getPostalCode(Context context, Location location) {

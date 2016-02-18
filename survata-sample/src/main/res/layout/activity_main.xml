@@ -45,7 +45,7 @@
                 android:layout_centerHorizontal="true"
                 android:background="@android:color/holo_red_light"
                 android:padding="5dp"
-                android:text="Complete 10-second survey to read full article!"
+                android:text="@string/show_survey"
                 android:textColor="@android:color/white"
                 android:textSize="12sp"/>
         </RelativeLayout>

@@ -4,10 +4,8 @@ package com.survata.ui;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,13 +14,11 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
 import com.survata.R;
 import com.survata.Survey;
@@ -46,7 +42,7 @@ public class SurveyDialogFragment extends DialogFragment {
 
     private Survey.SurveyStatusListener mSurveyStatusListener;
 
-    private Handler mHandler = new Handler(Looper.getMainLooper());
+    private final Handler mHandler = new Handler(Looper.getMainLooper());
 
     public void setSurveyStatusListener(Survey.SurveyStatusListener surveyStatusListener) {
         mSurveyStatusListener = surveyStatusListener;
@@ -54,7 +50,7 @@ public class SurveyDialogFragment extends DialogFragment {
 
     public static SurveyDialogFragment newInstance(String publisher, String brand, String explainer) {
         SurveyDialogFragment dialogFragment = new SurveyDialogFragment();
-        dialogFragment.setStyle( DialogFragment.STYLE_NORMAL, R.style.CustomDialog );
+        dialogFragment.setStyle(DialogFragment.STYLE_NORMAL, R.style.CustomDialog);
         Bundle bundle = new Bundle();
         bundle.putString(PUBLISHER, publisher);
         bundle.putString(BRAND, brand);
@@ -62,24 +58,6 @@ public class SurveyDialogFragment extends DialogFragment {
         dialogFragment.setArguments(bundle);
         return dialogFragment;
     }
-
-    public void dismissSurveyDialog() {
-
-        Activity activity = getActivity();
-
-        if (activity == null) {
-            Logger.d(TAG, "activity is null");
-            return;
-        }
-
-
-        FragmentTransaction ft = activity.getFragmentManager().beginTransaction();
-        Fragment fragment = activity.getFragmentManager().findFragmentByTag(SurveyDialogFragment.TAG);
-        if (fragment != null) {
-            ft.remove(fragment).commit();
-        }
-    }
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -115,20 +93,11 @@ public class SurveyDialogFragment extends DialogFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-//        Window window = getDialog().getWindow();
-//        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-//        window.setLayout(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
-
+        // start create survey wall
         createSurveyWall();
     }
 
     private class SurveyJavaScriptInterface {
-
-        private Context mContext;
-
-        public SurveyJavaScriptInterface(Context context) {
-            mContext = context;
-        }
 
         @JavascriptInterface
         public void onSurveyLoaded(String data) {
@@ -194,7 +163,7 @@ public class SurveyDialogFragment extends DialogFragment {
         });
     }
 
-    public void createSurveyWall() {
+    private void createSurveyWall() {
         Logger.d(TAG, "loading survey...");
 
         WebSettings webSettings = mWebView.getSettings();
@@ -207,7 +176,7 @@ public class SurveyDialogFragment extends DialogFragment {
             webSettings.setAllowFileAccessFromFileURLs(true);
         }
 
-        mWebView.addJavascriptInterface(new SurveyJavaScriptInterface(getActivity()), JS_INTERFACE_NAME);
+        mWebView.addJavascriptInterface(new SurveyJavaScriptInterface(), JS_INTERFACE_NAME);
 
         mWebView.setWebViewClient(new WebViewClient() {
             @Override
@@ -224,5 +193,22 @@ public class SurveyDialogFragment extends DialogFragment {
                 .replace("[LOADER_BASE64]", Utils.encodeImage(getActivity(), "circles_large.gif"));
 
         mWebView.loadDataWithBaseURL("https://www.survata.com", data, "text/html", "utf-8", null);
+    }
+
+    public void dismissSurveyDialog() {
+
+        Activity activity = getActivity();
+
+        if (activity == null) {
+            Logger.d(TAG, "activity is null");
+            return;
+        }
+
+        FragmentManager fragmentManager = activity.getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        Fragment fragment = fragmentManager.findFragmentByTag(SurveyDialogFragment.TAG);
+        if (fragment != null) {
+            fragmentTransaction.remove(fragment).commit();
+        }
     }
 }

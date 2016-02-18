@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">survata-sdk</string>
+    <string name="close_description">close webview</string>
 </resources>

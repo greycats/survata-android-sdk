@@ -3,6 +3,7 @@ package com.survata;
 import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
@@ -18,7 +19,7 @@ import org.json.JSONObject;
 public class Survey {
     private static final String TAG = "Survey";
 
-    public static final int REQUEST_SHOW_SURVEY = 2016;
+    private static final String CREATE_SURVEY_URL = "https://surveywall-api.survata.com/rest/interview-check/create";
 
     public interface SurveyAvailabilityListener {
         void onSurveyAvailable(SurveyAvailability surveyAvailability);
@@ -65,6 +66,11 @@ public class Survey {
                        final SurveyAvailabilityListener surveyAvailabilityListener) {
 
 
+        if (TextUtils.isEmpty(publisherUuid)) {
+            Logger.e(TAG, "publisher uuid should be empty");
+            return;
+        }
+
         RequestManager requestManager = new RequestManager() {
 
             @Override
@@ -72,11 +78,18 @@ public class Survey {
 
                 try {
                     JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("contentName", contentName);
-                    jsonObject.put("publisherUuid", publisherUuid);
-                    jsonObject.put("postalCode", postalCode);
 
-                    return new SurveyRequest(Api.CREATE_SURVEY_URL,
+                    if (!TextUtils.isEmpty(contentName)) {
+                        jsonObject.put("contentName", contentName);
+                    }
+
+                    jsonObject.put("publisherUuid", publisherUuid);
+
+                    if (!TextUtils.isEmpty(postalCode)) {
+                        jsonObject.put("postalCode", postalCode);
+                    }
+
+                    return new SurveyRequest(CREATE_SURVEY_URL,
                             jsonObject.toString(),
                             Utils.getUserAgent(context),
                             new SurveyRequest.SurveyListener() {

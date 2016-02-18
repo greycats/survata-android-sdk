@@ -2,7 +2,6 @@ package com.survata.utils;
 
 import android.content.Context;
 import android.util.Base64;
-import android.util.Log;
 
 import com.survata.R;
 
@@ -61,38 +60,6 @@ public class Utils {
         return encodeString;
     }
 
-    public static byte[] toByteArray(InputStream input) throws IOException {
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        copy(input, output);
-        return output.toByteArray();
-    }
-
-    public static int copy(InputStream input, OutputStream output) throws IOException {
-        long count = copyLarge(input, output);
-        if (count > Integer.MAX_VALUE) {
-            return -1;
-        }
-        return (int) count;
-    }
-
-
-    public static long copyLarge(InputStream input, OutputStream output)
-            throws IOException {
-        return copyLarge(input, output, new byte[DEFAULT_BUFFER_SIZE]);
-    }
-
-    public static long copyLarge(InputStream input, OutputStream output, byte[] buffer)
-            throws IOException {
-        long count = 0;
-        int n = 0;
-        while (EOF != (n = input.read(buffer))) {
-            output.write(buffer, 0, n);
-            count += n;
-        }
-        return count;
-    }
-
-
     public static String getFromAssets(String fileName, Context context) {
         StringBuilder sb = new StringBuilder();
         BufferedReader reader = null;
@@ -113,10 +80,40 @@ public class Utils {
                     reader.close();
                 }
             } catch (IOException e) {
-                Log.e(TAG, "close BufferedReader failed", e);
+                Logger.e(TAG, "close BufferedReader failed", e);
             }
         }
 
         return sb.toString();
+    }
+
+    private static byte[] toByteArray(InputStream input) throws IOException {
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        copy(input, output);
+        return output.toByteArray();
+    }
+
+    private static int copy(InputStream input, OutputStream output) throws IOException {
+        long count = copyLarge(input, output);
+        if (count > Integer.MAX_VALUE) {
+            return -1;
+        }
+        return (int) count;
+    }
+
+    private static long copyLarge(InputStream input, OutputStream output)
+            throws IOException {
+        return copyLarge(input, output, new byte[DEFAULT_BUFFER_SIZE]);
+    }
+
+    private static long copyLarge(InputStream input, OutputStream output, byte[] buffer)
+            throws IOException {
+        long count = 0;
+        int n;
+        while (EOF != (n = input.read(buffer))) {
+            output.write(buffer, 0, n);
+            count += n;
+        }
+        return count;
     }
 }
