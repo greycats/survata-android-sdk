@@ -19,6 +19,9 @@ android {
         targetSdkVersion 23
         versionCode computeVersionCode()
         versionName "1.0"
+
+        renderscriptTargetApi 20
+        renderscriptSupportModeEnabled true
     }
     buildTypes {
         release {
@@ -66,6 +69,8 @@ dependencies {
     compile 'com.squareup:seismic:1.0.2'
 
     compile 'net.hockeyapp.android:HockeySDK:3.7.0'
+
+    compile 'jp.wasabeef:blurry:1.0.5'
 
 //    compile 'com.survata.android:library:1.0.0'
 

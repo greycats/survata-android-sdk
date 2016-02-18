@@ -9,6 +9,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,8 @@ import com.survata.demo.util.HockeyHelper;
 import com.survata.demo.util.LocationTracker;
 import com.survata.utils.Logger;
 
+import jp.wasabeef.blurry.Blurry;
+
 public class MainActivity extends AppCompatActivity implements ShakeDetector.Listener {
 
     private static final String TAG = "MainActivity";
@@ -33,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements ShakeDetector.Lis
     private ShakeDetector mShakeDetector;
     private AlertDialog mAlertDialog;
     private LocationTracker mLocationTracker;
+    private boolean mBlurred = false;
     private Logger.SurveyDebugLog mSurveyDebugLog = new Logger.SurveyDebugLog() {
         @Override
         public void surveyLogV(String tag, String msg) {
@@ -89,6 +93,11 @@ public class MainActivity extends AppCompatActivity implements ShakeDetector.Lis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle(R.string.app_name);
+        toolbar.setTitleTextColor(ContextCompat.getColor(this, android.R.color.white));
 
         mCreateSurvey = (Button) findViewById(R.id.create_survey);
         mCreateSurvey.setOnClickListener(new View.OnClickListener() {
@@ -154,6 +163,8 @@ public class MainActivity extends AppCompatActivity implements ShakeDetector.Lis
     }
 
     private void showSurvey() {
+
+
         SurveyOption surveyOption = new SurveyOption("","", "46b140a358cd4fe7b425aa361b41bed9");
         mSurvey.createSurveyWall(MainActivity.this, "survata-test", surveyOption, new Survey.SurveyStatusListener() {
             @Override
@@ -260,6 +271,33 @@ public class MainActivity extends AppCompatActivity implements ShakeDetector.Lis
 
             mAlertDialog = builder.create();
             mAlertDialog.show();
+        }
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+
+        if (hasFocus) {
+            unBlur();
+        } else {
+            blur();
+        }
+    }
+
+    private void blur() {
+        if (!mBlurred) {
+            ViewGroup viewGroup = (ViewGroup) getWindow().getDecorView().findViewById(android.R.id.content);
+            Blurry.with(this).sampling(12).onto(viewGroup);
+            mBlurred = true;
+        }
+    }
+
+    private void unBlur() {
+        if (mBlurred) {
+            ViewGroup viewGroup = (ViewGroup) getWindow().getDecorView().findViewById(android.R.id.content);
+            Blurry.delete(viewGroup);
+            mBlurred = false;
         }
     }
 }
