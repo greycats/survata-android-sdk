@@ -1,5 +1,14 @@
 apply plugin: 'com.android.application'
 
+def computeVersionCode = { ->
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'rev-list', 'HEAD', '--count'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim().toInteger();
+}
+
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
@@ -8,7 +17,7 @@ android {
         applicationId "com.survata.demo"
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 1
+        versionCode computeVersionCode()
         versionName "1.0"
     }
     buildTypes {
@@ -17,11 +26,49 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    signingConfigs {
+        debugConfig {
+            storeFile file("debug.jks")
+            storePassword "survata"
+            keyAlias "com.survata.android"
+            keyPassword "survata"
+        }
+
+        releaseConfig {
+            storeFile file("release.jks")
+            storePassword "survata"
+            keyAlias "com.survata.android"
+            keyPassword "survata"
+        }
+    }
+
+    buildTypes {
+        debug {
+            signingConfig signingConfigs.debugConfig
+        }
+        release {
+            signingConfig signingConfigs.releaseConfig
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.1.1'
-    compile project(path: ':survata-sdk')
+    compile 'com.squareup:seismic:1.0.2'
+
+    compile 'net.hockeyapp.android:HockeySDK:3.7.0'
+
+//    compile 'com.survata.android:library:1.0.0'
+
+    releaseCompile project(path: ':survata-sdk', configuration: 'release')
+    debugCompile project(path: ':survata-sdk', configuration: 'debug')
 }

@@ -1,9 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        #loader {
+        background: #ffffff url('data:image/gif;base64,[LOADER_BASE64]') no-repeat center center;
+        position: absolute;
+        width:100%;
+        height: 100%;
+        }
+    </style>
+    <script>
 		(function(w, d, t, v) {
 	        w[v] = w[v] || {}; w[v].qr = []; w[v].qf = [];
 	        var got = 0, g = function() {
@@ -19,36 +27,42 @@
 	        };
 	        w[v].ready = function() { g(); w[v].qr.push(arguments); return w[v]; };
 	        w[v].fail = function() { g(); w[v].qf.push(arguments); return w[v]; };
-	        w[v].publisher = "survata-test";
+	        w[v].publisher = "[PUBLISHER_ID]";
 	    }(window, document, 'script', 'Survata'));
-		</script>
+
+    </script>
 </head>
 <body>
+<div id="loader"></div>
 <script>
 		Survata.ready(function() {
-			var s = Survata.createSurveywall({
-				brand: "",
-				explainer: "",
-				//preview: "5fd725139884422e9f1bb28f776c702d"
+			var s = Survata.createSurveywall([OPTION]);
+
+	        s.on("load", function(data) {
+	        	var loader = document.getElementById("loader");
+				loader.setAttribute("style", "display:none;");
+				Android.onSurveyLoaded(data);
 			});
-			s.on("load", function(data) {
-				survey.onLoad(data);
+
+            s.on("interviewStart", function() {
+                Android.onInterviewStart();
 			});
-			s.on("interviewComplete", function() {
-				survey.onInterviewComplete();
-			});
-			s.on("interviewStart", function() {
-				survey.onInterviewStart();
-			});
+
 			s.on("interviewSkip", function() {
-				survey.onInterviewSkip();
+                Android.onInterviewSkip();
 			});
-			window.startInterview = s.startInterview;
-			survey.onReady();
+
+			s.on("interviewComplete", function() {
+				Android.onInterviewComplete();
+			});
+
+            Android.onSurveyReady();
+			s.startInterview();
 		}, true);
 		Survata.fail(function() {
-			survey.onFail();
+			Android.onFail();
 		});
-		</script>
+
+</script>
 </body>
 </html>

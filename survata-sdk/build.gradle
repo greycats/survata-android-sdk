@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.novoda.bintray-release'
 
 android {
     compileSdkVersion 23
@@ -8,7 +9,7 @@ android {
         minSdkVersion 14
         targetSdkVersion 23
         versionCode 1
-        versionName "1.0"
+        versionName version
     }
     buildTypes {
         release {
@@ -16,13 +17,26 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    publishNonDefault true
+}
+
+configurations {
+    javadocDeps
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.1.1'
 
     // use temporarily, should create own volley aar to avoid conflict
     compile 'com.mcxiaoke.volley:library:1.0.19'
+}
+
+publish {
+    userOrg = 'evanliu1'
+    groupId = 'com.survata.android'
+    artifactId = 'library'
+    publishVersion = '1.0.0'
+    desc = 'survata sdk'
+    website = 'https://github.com/greycats/survata-android-sdk'
 }
