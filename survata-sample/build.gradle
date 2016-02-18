@@ -67,7 +67,7 @@ dependencies {
 
     compile 'net.hockeyapp.android:HockeySDK:3.7.0'
 
-//    compile 'com.survata:survata-sdk:1.0.1'
+//    compile 'com.survata.androi:library:1.0.0'
 
     releaseCompile project(path: ':survata-sdk', configuration: 'release')
     debugCompile project(path: ':survata-sdk', configuration: 'debug')
