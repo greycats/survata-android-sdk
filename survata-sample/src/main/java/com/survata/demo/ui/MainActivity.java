@@ -215,10 +215,10 @@ public class MainActivity extends AppCompatActivity implements ShakeDetector.Lis
             postalCode = mLocationTracker.getPostalCode(this, location);
         }
 
+        mSurvey.setPublisherUuid("survata-test");
+        mSurvey.setPostalCode(postalCode);
         mSurvey.create(this,
                 "https://www.survata.com/publisher-demos/internal/",
-                "survata-test",
-                postalCode,
                 new Survey.SurveyAvailabilityListener() {
                     @Override
                     public void onSurveyAvailable(Survey.SurveyAvailability surveyAvailability) {

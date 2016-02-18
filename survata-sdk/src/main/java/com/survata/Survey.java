@@ -21,6 +21,18 @@ public class Survey {
 
     private static final String CREATE_SURVEY_URL = "https://surveywall-api.survata.com/rest/interview-check/create";
 
+    private String mPublisherUuid;
+
+    private String mPostalCode;
+
+    public void setPublisherUuid(String publisherUuid) {
+        mPublisherUuid = publisherUuid;
+    }
+
+    public void setPostalCode(String postalCode) {
+        mPostalCode = postalCode;
+    }
+
     public interface SurveyAvailabilityListener {
         void onSurveyAvailable(SurveyAvailability surveyAvailability);
     }
@@ -47,7 +59,10 @@ public class Survey {
         NETWORK_NOT_AVAILABLE
     }
 
-    public void createSurveyWall(Activity activity, String publisher, SurveyOption surveyOption, SurveyStatusListener surveyStatusListener) {
+    public void createSurveyWall(final Activity activity,
+                                 final String publisher,
+                                 final SurveyOption surveyOption,
+                                 final SurveyStatusListener surveyStatusListener) {
         SurveyDialogFragment dialogFragment = SurveyDialogFragment.newInstance(publisher, surveyOption);
         dialogFragment.dismissSurveyDialog();
 
@@ -61,12 +76,10 @@ public class Survey {
 
     public void create(final Context context,
                        final String contentName,
-                       final String publisherUuid,
-                       final String postalCode,
                        final SurveyAvailabilityListener surveyAvailabilityListener) {
 
 
-        if (TextUtils.isEmpty(publisherUuid)) {
+        if (TextUtils.isEmpty(mPublisherUuid)) {
             Logger.e(TAG, "publisher uuid should be empty");
             return;
         }
@@ -83,10 +96,10 @@ public class Survey {
                         jsonObject.put("contentName", contentName);
                     }
 
-                    jsonObject.put("publisherUuid", publisherUuid);
+                    jsonObject.put("publisherUuid", mPublisherUuid);
 
-                    if (!TextUtils.isEmpty(postalCode)) {
-                        jsonObject.put("postalCode", postalCode);
+                    if (!TextUtils.isEmpty(mPostalCode)) {
+                        jsonObject.put("postalCode", mPostalCode);
                     }
 
                     return new SurveyRequest(CREATE_SURVEY_URL,

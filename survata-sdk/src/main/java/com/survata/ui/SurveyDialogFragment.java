@@ -101,7 +101,7 @@ public class SurveyDialogFragment extends DialogFragment {
             Logger.d(TAG, "survey loaded");
 
             if (!TextUtils.isEmpty(data) && data.equals("monetizable")) {
-
+                //continue
             } else {
                 updateResult(Survey.SurveyResult.CREDIT_EARNED);
             }
