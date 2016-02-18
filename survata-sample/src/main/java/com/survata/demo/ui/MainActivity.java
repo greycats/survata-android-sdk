@@ -33,6 +33,57 @@ public class MainActivity extends AppCompatActivity implements ShakeDetector.Lis
     private ShakeDetector mShakeDetector;
     private AlertDialog mAlertDialog;
     private LocationTracker mLocationTracker;
+    private Logger.SurveyDebugLog mSurveyDebugLog = new Logger.SurveyDebugLog() {
+        @Override
+        public void surveyLogV(String tag, String msg) {
+
+        }
+
+        @Override
+        public void surveyLogV(String tag, String msg, Throwable tr) {
+
+        }
+
+        @Override
+        public void surveyLogD(String tag, String msg) {
+
+        }
+
+        @Override
+        public void surveyLogD(String tag, String msg, Throwable tr) {
+
+        }
+
+        @Override
+        public void surveyLogI(String tag, String msg) {
+
+        }
+
+        @Override
+        public void surveyLogI(String tag, String msg, Throwable tr) {
+
+        }
+
+        @Override
+        public void surveyLogW(String tag, String msg) {
+
+        }
+
+        @Override
+        public void surveyLogW(String tag, String msg, Throwable tr) {
+
+        }
+
+        @Override
+        public void surveyLogE(String tag, String msg) {
+
+        }
+
+        @Override
+        public void surveyLogE(String tag, String msg, Throwable tr) {
+
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,57 +101,7 @@ public class MainActivity extends AppCompatActivity implements ShakeDetector.Lis
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
         mContainer = (ViewGroup) findViewById(R.id.container);
 
-        mSurvey.setSurveyDebugLog(new Logger.SurveyDebugLog() {
-            @Override
-            public void surveyLogV(String tag, String msg) {
-
-            }
-
-            @Override
-            public void surveyLogV(String tag, String msg, Throwable tr) {
-
-            }
-
-            @Override
-            public void surveyLogD(String tag, String msg) {
-
-            }
-
-            @Override
-            public void surveyLogD(String tag, String msg, Throwable tr) {
-
-            }
-
-            @Override
-            public void surveyLogI(String tag, String msg) {
-
-            }
-
-            @Override
-            public void surveyLogI(String tag, String msg, Throwable tr) {
-
-            }
-
-            @Override
-            public void surveyLogW(String tag, String msg) {
-
-            }
-
-            @Override
-            public void surveyLogW(String tag, String msg, Throwable tr) {
-
-            }
-
-            @Override
-            public void surveyLogE(String tag, String msg) {
-
-            }
-
-            @Override
-            public void surveyLogE(String tag, String msg, Throwable tr) {
-
-            }
-        });
+        mSurvey.setSurveyDebugLog(mSurveyDebugLog);
 
         startShakeDetector();
 
@@ -130,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements ShakeDetector.Lis
                 && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // You need to ask the user to enable the permissions
             Log.e(TAG, "need permission");
-            checkSurvey(null);
+            startCheckSurvey();
         } else {
             mLocationTracker = new LocationTracker(this) {
                 @Override
@@ -138,14 +139,14 @@ public class MainActivity extends AppCompatActivity implements ShakeDetector.Lis
                     Log.e(TAG, "onLocationFound " + location);
                     mLocationTracker.stopListening();
 
-                    checkSurvey(location);
+                    startCheckSurvey(location);
                 }
 
                 @Override
                 public void onTimeout() {
                     Log.e(TAG, "onTimeout");
 
-                    checkSurvey(null);
+                    startCheckSurvey();
                 }
             };
             mLocationTracker.startListening();
@@ -208,7 +209,11 @@ public class MainActivity extends AppCompatActivity implements ShakeDetector.Lis
         mContainer.setVisibility(View.VISIBLE);
     }
 
-    private void checkSurvey(Location location) {
+    private void startCheckSurvey(){
+        startCheckSurvey(null);
+    }
+
+    private void startCheckSurvey(Location location) {
         String postalCode = "";
 
         if (location != null) {
