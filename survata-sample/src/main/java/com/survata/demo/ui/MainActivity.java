@@ -17,6 +17,7 @@ import android.widget.ProgressBar;
 
 import com.squareup.seismic.ShakeDetector;
 import com.survata.Survey;
+import com.survata.SurveyOption;
 import com.survata.demo.R;
 import com.survata.demo.util.HockeyHelper;
 import com.survata.demo.util.LocationTracker;
@@ -152,7 +153,8 @@ public class MainActivity extends AppCompatActivity implements ShakeDetector.Lis
     }
 
     private void showSurvey() {
-        mSurvey.createSurveyWall(MainActivity.this, "survata-test", "", "", new Survey.SurveyStatusListener() {
+        SurveyOption surveyOption = new SurveyOption("","", "46b140a358cd4fe7b425aa361b41bed9");
+        mSurvey.createSurveyWall(MainActivity.this, "survata-test", surveyOption, new Survey.SurveyStatusListener() {
             @Override
             public void onResult(Survey.SurveyResult surveyResult) {
                 Log.d(TAG, "surveyResult: " + surveyResult);

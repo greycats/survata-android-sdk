@@ -36,11 +36,7 @@
 <div id="loader"></div>
 <script>
 		Survata.ready(function() {
-			var s = Survata.createSurveywall({
-				brand: "[BRAND]",
-				explainer: "[EXPLAINER]",
-				preview: "46b140a358cd4fe7b425aa361b41bed9"
-			});
+			var s = Survata.createSurveywall([OPTION]);
 
 	        s.on("load", function(data) {
 	        	var loader = document.getElementById("loader");

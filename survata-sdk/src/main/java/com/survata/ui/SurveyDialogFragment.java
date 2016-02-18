@@ -22,6 +22,7 @@ import android.widget.ImageView;
 
 import com.survata.R;
 import com.survata.Survey;
+import com.survata.SurveyOption;
 import com.survata.utils.Logger;
 import com.survata.utils.Utils;
 
@@ -29,16 +30,14 @@ public class SurveyDialogFragment extends DialogFragment {
 
     public static final String TAG = "SurveyDialogFragment";
     private static final String PUBLISHER = "publisher";
-    private static final String BRAND = "brand";
-    private static final String EXPLAINER = "explainer";
+    private static final String SURVEY_OPTION = "SurveyOption";
     private static final String JS_INTERFACE_NAME = "Android";
 
     private WebView mWebView;
     private ImageView mCloseImage;
 
     private String mPublisher;
-    private String mBrand;
-    private String mExplainer;
+    private SurveyOption mSurveyOption;
 
     private Survey.SurveyStatusListener mSurveyStatusListener;
 
@@ -48,13 +47,12 @@ public class SurveyDialogFragment extends DialogFragment {
         mSurveyStatusListener = surveyStatusListener;
     }
 
-    public static SurveyDialogFragment newInstance(String publisher, String brand, String explainer) {
+    public static SurveyDialogFragment newInstance(String publisher, SurveyOption surveyOption) {
         SurveyDialogFragment dialogFragment = new SurveyDialogFragment();
         dialogFragment.setStyle(DialogFragment.STYLE_NORMAL, R.style.CustomDialog);
         Bundle bundle = new Bundle();
         bundle.putString(PUBLISHER, publisher);
-        bundle.putString(BRAND, brand);
-        bundle.putString(EXPLAINER, explainer);
+        bundle.putSerializable(SURVEY_OPTION, surveyOption);
         dialogFragment.setArguments(bundle);
         return dialogFragment;
     }
@@ -66,8 +64,7 @@ public class SurveyDialogFragment extends DialogFragment {
         Bundle bundle = getArguments();
         if (bundle != null) {
             mPublisher = bundle.getString(PUBLISHER);
-            mBrand = bundle.getString(BRAND);
-            mExplainer = bundle.getString(EXPLAINER);
+            mSurveyOption = (SurveyOption) bundle.getSerializable(SURVEY_OPTION);
         }
     }
 
@@ -188,8 +185,7 @@ public class SurveyDialogFragment extends DialogFragment {
         String html = Utils.getFromAssets("template.html", getActivity());
 
         String data = html.replace("[PUBLISHER_ID]", mPublisher)
-                .replace("[BRAND]", mBrand)
-                .replace("[EXPLAINER]", mExplainer)
+                .replace("[OPTION]", mSurveyOption.description())
                 .replace("[LOADER_BASE64]", Utils.encodeImage(getActivity(), "circles_large.gif"));
 
         mWebView.loadDataWithBaseURL("https://www.survata.com", data, "text/html", "utf-8", null);

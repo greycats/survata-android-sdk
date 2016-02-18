@@ -47,8 +47,8 @@ public class Survey {
         NETWORK_NOT_AVAILABLE
     }
 
-    public void createSurveyWall(Activity activity, String publisher, String brand, String explainer, SurveyStatusListener surveyStatusListener) {
-        SurveyDialogFragment dialogFragment = SurveyDialogFragment.newInstance(publisher, brand, explainer);
+    public void createSurveyWall(Activity activity, String publisher, SurveyOption surveyOption, SurveyStatusListener surveyStatusListener) {
+        SurveyDialogFragment dialogFragment = SurveyDialogFragment.newInstance(publisher, surveyOption);
         dialogFragment.dismissSurveyDialog();
 
         FragmentTransaction ft = activity.getFragmentManager().beginTransaction();
