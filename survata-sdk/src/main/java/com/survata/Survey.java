@@ -25,6 +25,12 @@ public class Survey {
 
     private String mPostalCode;
 
+    private String mContentName;
+
+    public void setContentName(String contentName) {
+        mContentName = contentName;
+    }
+
     public void setPublisherUuid(String publisherUuid) {
         mPublisherUuid = publisherUuid;
     }
@@ -75,7 +81,6 @@ public class Survey {
     }
 
     public void create(final Context context,
-                       final String contentName,
                        final SurveyAvailabilityListener surveyAvailabilityListener) {
 
 
@@ -92,8 +97,8 @@ public class Survey {
                 try {
                     JSONObject jsonObject = new JSONObject();
 
-                    if (!TextUtils.isEmpty(contentName)) {
-                        jsonObject.put("contentName", contentName);
+                    if (!TextUtils.isEmpty(mContentName)) {
+                        jsonObject.put("contentName", mContentName);
                     }
 
                     jsonObject.put("publisherUuid", mPublisherUuid);
