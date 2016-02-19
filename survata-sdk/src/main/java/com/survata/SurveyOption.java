@@ -8,16 +8,17 @@ public class SurveyOption implements Serializable {
     private String brand;
     private String explainer;
     private String preview;
+    private String contentName;
 
-    public SurveyOption(String brand, String explainer, String preview) {
+    public SurveyOption(String brand, String explainer, String preview, String contentName) {
         this.brand = brand;
         this.explainer = explainer;
         this.preview = preview;
+        this.contentName = contentName;
     }
 
     public String description() {
         StringBuilder builder = new StringBuilder();
-        builder.append("{");
         if (!TextUtils.isEmpty(brand)) {
             append(builder, "brand", brand);
         }
@@ -27,11 +28,19 @@ public class SurveyOption implements Serializable {
         if (!TextUtils.isEmpty(preview)) {
             append(builder, "preview", preview);
         }
-        builder.append("}");
-        return builder.toString();
+        if (!TextUtils.isEmpty(contentName)) {
+            append(builder, "contentName", contentName);
+        }
+
+        String option = "";
+        if (builder.length() > 0) {
+            option = builder.substring(0, builder.length() - 1);
+        }
+
+        return "{" + option + "}";
     }
 
-    private void append(StringBuilder builder, String key, String value){
-        builder.append(key).append(":").append("\"").append(preview).append("\"");
+    private void append(StringBuilder builder, String key, String value) {
+        builder.append(key).append(":").append("\"").append(value).append("\"").append(",");
     }
 }

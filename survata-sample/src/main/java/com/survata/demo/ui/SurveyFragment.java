@@ -157,7 +157,8 @@ public class SurveyFragment extends Fragment {
         blur();
 
         String previewId = SurveyUtils.getPreviewId(getContext());
-        SurveyOption surveyOption = new SurveyOption("", "", previewId);
+        String contentName = SurveyUtils.getContentName(getContext());
+        SurveyOption surveyOption = new SurveyOption("", "", previewId, contentName);
 
         String publisherId = getString(R.string.default_publisher_id);
         mSurvey.createSurveyWall(getActivity(), publisherId, surveyOption, new Survey.SurveyStatusListener() {
