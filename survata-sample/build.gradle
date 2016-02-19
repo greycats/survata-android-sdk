@@ -72,8 +72,8 @@ dependencies {
     compile 'net.hockeyapp.android:HockeySDK:3.7.0'
     compile 'jp.wasabeef:blurry:1.0.5'
     compile 'com.android.support:preference-v14:23.1.1'
-//    compile 'com.survata.android:library:1.0.0'
+    compile 'com.survata.android:library:1.0.1'
 
-    releaseCompile project(path: ':survata-sdk', configuration: 'release')
-    debugCompile project(path: ':survata-sdk', configuration: 'debug')
+//    releaseCompile project(path: ':survata-sdk', configuration: 'release')
+//    debugCompile project(path: ':survata-sdk', configuration: 'debug')
 }
