@@ -23,11 +23,14 @@ public class Survey {
 
     private static final String CREATE_SURVEY_URL = "https://surveywall-api.survata.com/rest/interview-check/create";
 
-    @NonNull private String mPublisherUuid;
+    @NonNull
+    private String mPublisherUuid;
 
-    @Nullable private String mPostalCode;
+    @Nullable
+    private String mPostalCode;
 
-    @Nullable private String mContentName;
+    @Nullable
+    private String mContentName;
 
     @NonNull
     public void setPublisherUuid(String publisherUuid) {
@@ -44,15 +47,23 @@ public class Survey {
         mContentName = contentName;
     }
 
-
+    /**
+     * survey availability callback
+     */
     public interface SurveyAvailabilityListener {
         void onSurveyAvailable(SurveyAvailability surveyAvailability);
     }
 
+    /**
+     * survey status callback
+     */
     public interface SurveyStatusListener {
         void onResult(SurveyResult surveyResult);
     }
 
+    /**
+     * enum status returned in create api
+     */
     public enum SurveyAvailability {
         AVAILABILITY,
         NOT_AVAILABLE,
@@ -60,6 +71,9 @@ public class Survey {
         NETWORK_NOT_AVAILABLE
     }
 
+    /**
+     * enum status returned in present api
+     */
     public enum SurveyResult {
         READY,
         STARTED,
@@ -71,6 +85,14 @@ public class Survey {
         NETWORK_NOT_AVAILABLE
     }
 
+    /**
+     * present survey in webview
+     *
+     * @param activity             activity
+     * @param surveyOption         creation options
+     * @param surveyStatusListener callbacks survey result
+     * @throws SurveyException
+     */
     public void createSurveyWall(@NonNull final Activity activity,
                                  @NonNull final SurveyOption surveyOption,
                                  @Nullable final SurveyStatusListener surveyStatusListener) throws SurveyException {
@@ -90,6 +112,14 @@ public class Survey {
         }
     }
 
+    /**
+     * call this function to initialize Survata
+     * e.g. use this to determine wether to show the survata button and the button will trigger presentation
+     *
+     * @param context                    context
+     * @param surveyAvailabilityListener callback availability
+     * @throws SurveyException
+     */
     public void create(@NonNull final Context context,
                        @Nullable final SurveyAvailabilityListener surveyAvailabilityListener) throws SurveyException {
 
@@ -160,7 +190,10 @@ public class Survey {
         requestManager.makeRequest(context);
     }
 
-
+    /**
+     * handle all event logs
+     * @param surveyDebugLog
+     */
     public void setSurveyDebugLog(Logger.SurveyDebugLog surveyDebugLog) {
         Logger.setSurveyDebugLog(surveyDebugLog);
     }
