@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta id="viewport" name="viewport" content="user-scalable=no, minimum-scale=1.0, maximum-scale=1.0, width=device-width" />
     <style>
         #loader {
         background: #ffffff url('data:image/gif;base64,[LOADER_BASE64]') no-repeat center center;
@@ -40,7 +40,7 @@
         option["verticalLayout"] = true;
         option["hideFooter"] = true;
         option["disallowClose"] = true;
-			var s = Survata.createSurveywall([OPTION]);
+			var s = Survata.createSurveywall(option);
 
 	        s.on("load", function(data) {
 	        	var loader = document.getElementById("loader");
