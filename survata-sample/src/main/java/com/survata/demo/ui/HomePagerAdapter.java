@@ -20,8 +20,9 @@ public class HomePagerAdapter extends FragmentPagerAdapter {
 
     public HomePagerAdapter(FragmentActivity activity) {
         this(activity, ImmutableList.<Fragment>builder()
-                .add(new SurveyFragment())
+                .add(new DemoFragment())
                 .add(new SettingFragment())
+                .add(new TestFragment())
                 .build());
     }
 
@@ -51,11 +52,14 @@ public class HomePagerAdapter extends FragmentPagerAdapter {
         final int titleResId;
 
         switch (position) {
-            case SurveyFragment.INDEX:
+            case DemoFragment.INDEX:
                 titleResId = getSurveyFragment().getTitleResId();
                 break;
             case SettingFragment.INDEX:
                 titleResId = getSettingFragment().getTitleResId();
+                break;
+            case TestFragment.INDEX:
+                titleResId = getTestFragment().getTitleResId();
                 break;
             default:
                 Log.d(TAG, "unknown position getPageTitle: " + position);
@@ -65,12 +69,16 @@ public class HomePagerAdapter extends FragmentPagerAdapter {
         return mActivity.getString(titleResId);
     }
 
-    public SurveyFragment getSurveyFragment() {
-        return (SurveyFragment) getItem(SurveyFragment.INDEX);
+    public DemoFragment getSurveyFragment() {
+        return (DemoFragment) getItem(DemoFragment.INDEX);
     }
 
     public SettingFragment getSettingFragment() {
         return (SettingFragment) getItem(SettingFragment.INDEX);
+    }
+
+    public TestFragment getTestFragment() {
+        return (TestFragment) getItem(TestFragment.INDEX);
     }
 
     public View getTabView(int position) {
@@ -81,7 +89,7 @@ public class HomePagerAdapter extends FragmentPagerAdapter {
     }
 
     public int getPageIndexForTag(Object tag) {
-        SurveyFragment surveyFragment = getSurveyFragment();
+        DemoFragment surveyFragment = getSurveyFragment();
         Integer otherTag = surveyFragment.getTitleResId();
         if (otherTag.equals(tag)) {
             return surveyFragment.INDEX;
@@ -93,6 +101,11 @@ public class HomePagerAdapter extends FragmentPagerAdapter {
             return settingFragment.INDEX;
         }
 
+        TestFragment testFragment = getTestFragment();
+        otherTag = testFragment.getTitleResId();
+        if (otherTag.equals(tag)) {
+            return testFragment.INDEX;
+        }
         throw new IllegalArgumentException("Couldn't find tag: " + tag);
     }
 }

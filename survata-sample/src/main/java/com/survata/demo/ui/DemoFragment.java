@@ -26,7 +26,7 @@ import com.survata.utils.Logger;
 
 import jp.wasabeef.blurry.Blurry;
 
-public class SurveyFragment extends Fragment {
+public class DemoFragment extends Fragment {
 
     private static final String TAG = "DemoFragment";
     public static final int INDEX = 0;

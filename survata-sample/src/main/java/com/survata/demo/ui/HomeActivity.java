@@ -67,17 +67,21 @@ public class HomeActivity extends AppCompatActivity implements ShakeDetector.Lis
         mTabLayout.setTabMode(TabLayout.MODE_FIXED);
         mTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-        SurveyFragment surveyFragment = mHomePagerAdapter.getSurveyFragment();
+        DemoFragment surveyFragment = mHomePagerAdapter.getSurveyFragment();
         SettingFragment settingFragment = mHomePagerAdapter.getSettingFragment();
+        TestFragment testFragment = mHomePagerAdapter.getTestFragment();
 
         TabLayout.Tab surveyTab = createTabForFragment(surveyFragment.getTitleResId());
         TabLayout.Tab settingTab = createTabForFragment(settingFragment.getTitleResId());
+        TabLayout.Tab testTab = createTabForFragment(testFragment.getTitleResId());
 
         mTabs.add(surveyTab);
         mTabs.add(settingTab);
+        mTabs.add(testTab);
 
         mTabLayout.addTab(surveyTab, surveyFragment.INDEX);
         mTabLayout.addTab(settingTab, settingFragment.INDEX);
+        mTabLayout.addTab(testTab, testFragment.INDEX);
 
         for (int i = 0; i < mTabLayout.getTabCount(); i++) {
             TabLayout.Tab tab = mTabLayout.getTabAt(i);
@@ -138,7 +142,7 @@ public class HomeActivity extends AppCompatActivity implements ShakeDetector.Lis
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     dialog.dismiss();
-                                    SurveyFragment surveyFragment = (SurveyFragment) mHomePagerAdapter.getItem(SurveyFragment.INDEX);
+                                    DemoFragment surveyFragment = (DemoFragment) mHomePagerAdapter.getItem(DemoFragment.INDEX);
                                     surveyFragment.checkSurvey();
                                 }
                             })
@@ -160,7 +164,7 @@ public class HomeActivity extends AppCompatActivity implements ShakeDetector.Lis
         super.onWindowFocusChanged(hasFocus);
 
         if (hasFocus) {
-            SurveyFragment surveyFragment = (SurveyFragment) mHomePagerAdapter.getItem(SurveyFragment.INDEX);
+            DemoFragment surveyFragment = (DemoFragment) mHomePagerAdapter.getItem(DemoFragment.INDEX);
             surveyFragment.unBlur();
         }
     }
