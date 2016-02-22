@@ -4,8 +4,8 @@
     <string name="preview_id">preview id</string>
     <string name="content_name">contentName (nullable)</string>
     <string name="zip_code">zipCode (nullable)</string>
-    <string name="content_name_toggle">whether to send content name</string>
-    <string name="zip_code_toggle">whether to send zip code</string>
+    <string name="content_name_toggle">Use contentName</string>
+    <string name="zip_code_toggle">Send zipCode</string>
     <string name="reset">Reset</string>
     <string name="reset_value">Reset to default</string>
 

@@ -19,7 +19,7 @@
         android:summary="@string/default_content_name"
         android:title="@string/content_name"/>
 
-    <CheckBoxPreference
+    <SwitchPreference
         android:key="@string/content_name_toggle"
         android:summary=""
         android:title="@string/content_name_toggle"/>
@@ -30,7 +30,7 @@
         android:summary="@string/default_zip_code"
         android:title="@string/zip_code"/>
 
-    <CheckBoxPreference
+    <SwitchPreference
         android:key="@string/zip_code_toggle"
         android:summary=""
         android:title="@string/zip_code_toggle"/>

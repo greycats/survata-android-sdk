@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.preference.CheckBoxPreference;
+import android.support.v14.preference.SwitchPreference;
 import android.support.v7.preference.EditTextPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
@@ -45,7 +45,9 @@ public class SettingFragment extends PreferenceFragmentCompat implements SharedP
 
         String contentNameToggle = resources.getString(R.string.content_name_toggle);
         preference = findPreference(contentNameToggle);
-        ((CheckBoxPreference) preference).setChecked(SurveyUtils.getContentNameEnable(context));
+        boolean contentNameEnable = SurveyUtils.getContentNameEnable(context);
+        ((SwitchPreference) preference).setChecked(contentNameEnable);
+        hideOrShowContentName(contentNameEnable);
 
         String zipCodeString = resources.getString(R.string.zip_code);
         preference = findPreference(zipCodeString);
@@ -53,8 +55,9 @@ public class SettingFragment extends PreferenceFragmentCompat implements SharedP
 
         String zipCodeToggle = resources.getString(R.string.zip_code_toggle);
         preference = findPreference(zipCodeToggle);
-        ((CheckBoxPreference) preference).setChecked(SurveyUtils.getZipCodeEnable(context));
-
+        boolean zipCodeEnable = SurveyUtils.getZipCodeEnable(context);
+        ((SwitchPreference) preference).setChecked(zipCodeEnable);
+        hideOrShowZipCode(zipCodeEnable);
 
         String reset = resources.getString(R.string.reset);
         preference = findPreference(reset);
@@ -107,10 +110,12 @@ public class SettingFragment extends PreferenceFragmentCompat implements SharedP
             summary = sharedPreferences.getString(key, getString(R.string.default_content_name));
         } else if (key.equals(getString(R.string.content_name_toggle))) {
             checked = sharedPreferences.getBoolean(key, false);
+            hideOrShowContentName(checked);
         } else if (key.equals(getString(R.string.zip_code))) {
             summary = sharedPreferences.getString(key, getString(R.string.default_zip_code));
         } else if (key.equals(getString(R.string.zip_code_toggle))) {
             checked = sharedPreferences.getBoolean(key, false);
+            hideOrShowZipCode(checked);
         }
 
         Preference preference = findPreference(key);
@@ -119,9 +124,9 @@ public class SettingFragment extends PreferenceFragmentCompat implements SharedP
             EditTextPreference editTextPreference = (EditTextPreference) preference;
             editTextPreference.setSummary(summary);
 
-        } else if (preference instanceof CheckBoxPreference) {
-            CheckBoxPreference checkBoxPreference = (CheckBoxPreference) preference;
-            checkBoxPreference.setChecked(checked);
+        } else if (preference instanceof SwitchPreference) {
+            SwitchPreference switchPreference = (SwitchPreference) preference;
+            switchPreference.setChecked(checked);
         }
     }
 
@@ -141,9 +146,20 @@ public class SettingFragment extends PreferenceFragmentCompat implements SharedP
         sharedPreferences.edit().putString(zipCodeString, context.getString(R.string.default_zip_code)).apply();
 
         String contentNameToggle = context.getString(R.string.content_name_toggle);
-        sharedPreferences.edit().putBoolean(contentNameToggle, false).apply();
+        sharedPreferences.edit().putBoolean(contentNameToggle, true).apply();
 
         String zipCodeToggle = context.getString(R.string.zip_code_toggle);
-        sharedPreferences.edit().putBoolean(zipCodeToggle, false).apply();
+        sharedPreferences.edit().putBoolean(zipCodeToggle, true).apply();
     }
+
+    private void hideOrShowContentName(boolean result) {
+        String contentNameToggle = getActivity().getString(R.string.content_name);
+        findPreference(contentNameToggle).setVisible(result);
+    }
+
+    private void hideOrShowZipCode(boolean result) {
+        String contentNameToggle = getActivity().getString(R.string.zip_code);
+        findPreference(contentNameToggle).setVisible(result);
+    }
+
 }

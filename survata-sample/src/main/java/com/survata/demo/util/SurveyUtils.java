@@ -35,12 +35,12 @@ public class SurveyUtils {
     public static boolean getContentNameEnable(Context context) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         String contentNameToggle = context.getString(R.string.content_name_toggle);
-        return sharedPreferences.getBoolean(contentNameToggle, false);
+        return sharedPreferences.getBoolean(contentNameToggle, true);
     }
 
     public static boolean getZipCodeEnable(Context context) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         String zipCodeToggle = context.getString(R.string.zip_code_toggle);
-        return sharedPreferences.getBoolean(zipCodeToggle, false);
+        return sharedPreferences.getBoolean(zipCodeToggle, true);
     }
 }
