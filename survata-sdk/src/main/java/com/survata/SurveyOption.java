@@ -5,10 +5,10 @@ import android.text.TextUtils;
 import java.io.Serializable;
 
 public class SurveyOption implements Serializable {
-    private String brand;
-    private String explainer;
-    private String preview;
-    private String contentName;
+    protected String brand;
+    protected String explainer;
+    protected String preview;
+    protected String contentName;
 
     public SurveyOption(String brand, String explainer, String preview, String contentName) {
         this.brand = brand;

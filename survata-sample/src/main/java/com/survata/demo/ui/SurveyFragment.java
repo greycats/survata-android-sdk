@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 
 import com.survata.Survey;
+import com.survata.SurveyException;
 import com.survata.SurveyOption;
 import com.survata.demo.R;
 import com.survata.demo.util.LocationTracker;
@@ -160,17 +161,23 @@ public class SurveyFragment extends Fragment {
         String contentName = SurveyUtils.getContentName(getContext());
         SurveyOption surveyOption = new SurveyOption("", "", previewId, contentName);
 
-        String publisherId = getString(R.string.default_publisher_id);
-        mSurvey.createSurveyWall(getActivity(), publisherId, surveyOption, new Survey.SurveyStatusListener() {
-            @Override
-            public void onResult(Survey.SurveyResult surveyResult) {
-                Log.d(TAG, "surveyResult: " + surveyResult);
+        String publisherId = SurveyUtils.getPublisherId(getContext());
+        mSurvey.setPublisherUuid(publisherId);
 
-                if (surveyResult == Survey.SurveyResult.COMPLETED) {
-                    showFullView();
+        try {
+            mSurvey.createSurveyWall(getActivity(), surveyOption, new Survey.SurveyStatusListener() {
+                @Override
+                public void onResult(Survey.SurveyResult surveyResult) {
+                    Log.d(TAG, "surveyResult: " + surveyResult);
+
+                    if (surveyResult == Survey.SurveyResult.COMPLETED) {
+                        showFullView();
+                    }
                 }
-            }
-        });
+            });
+        } catch (SurveyException e) {
+            Log.d(TAG, "show survey exception", e);
+        }
     }
 
     private void showFullView() {
@@ -230,18 +237,22 @@ public class SurveyFragment extends Fragment {
             mSurvey.setContentName(contentName);
         }
 
-        mSurvey.create(getActivity(),
-                new Survey.SurveyAvailabilityListener() {
-                    @Override
-                    public void onSurveyAvailable(Survey.SurveyAvailability surveyAvailability) {
-                        Log.d(TAG, "check survey result: " + surveyAvailability);
-                        if (surveyAvailability == Survey.SurveyAvailability.AVAILABILITY) {
-                            showCreateSurveyWallButton();
-                        } else {
-                            showFullView();
+        try {
+            mSurvey.create(getActivity(),
+                    new Survey.SurveyAvailabilityListener() {
+                        @Override
+                        public void onSurveyAvailable(Survey.SurveyAvailability surveyAvailability) {
+                            Log.d(TAG, "check survey result: " + surveyAvailability);
+                            if (surveyAvailability == Survey.SurveyAvailability.AVAILABILITY) {
+                                showCreateSurveyWallButton();
+                            } else {
+                                showFullView();
+                            }
                         }
-                    }
-                });
+                    });
+        } catch (SurveyException e) {
+            Log.d(TAG, "show survey exception", e);
+        }
     }
 
 

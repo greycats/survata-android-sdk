@@ -3,6 +3,8 @@ package com.survata;
 import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.android.volley.Request;
@@ -21,23 +23,27 @@ public class Survey {
 
     private static final String CREATE_SURVEY_URL = "https://surveywall-api.survata.com/rest/interview-check/create";
 
-    private String mPublisherUuid;
+    @NonNull private String mPublisherUuid;
 
-    private String mPostalCode;
+    @Nullable private String mPostalCode;
 
-    private String mContentName;
+    @Nullable private String mContentName;
 
-    public void setContentName(String contentName) {
-        mContentName = contentName;
-    }
-
+    @NonNull
     public void setPublisherUuid(String publisherUuid) {
         mPublisherUuid = publisherUuid;
     }
 
+    @Nullable
     public void setPostalCode(String postalCode) {
         mPostalCode = postalCode;
     }
+
+    @Nullable
+    public void setContentName(String contentName) {
+        mContentName = contentName;
+    }
+
 
     public interface SurveyAvailabilityListener {
         void onSurveyAvailable(SurveyAvailability surveyAvailability);
@@ -65,11 +71,15 @@ public class Survey {
         NETWORK_NOT_AVAILABLE
     }
 
-    public void createSurveyWall(final Activity activity,
-                                 final String publisher,
-                                 final SurveyOption surveyOption,
-                                 final SurveyStatusListener surveyStatusListener) {
-        SurveyDialogFragment dialogFragment = SurveyDialogFragment.newInstance(publisher, surveyOption);
+    public void createSurveyWall(@NonNull final Activity activity,
+                                 @NonNull final SurveyOption surveyOption,
+                                 @Nullable final SurveyStatusListener surveyStatusListener) throws SurveyException {
+
+        if (TextUtils.isEmpty(mPublisherUuid)) {
+            throw new SurveyException("publisher uuid should be empty, should initialize");
+        }
+
+        SurveyDialogFragment dialogFragment = SurveyDialogFragment.newInstance(mPublisherUuid, surveyOption);
         dialogFragment.dismissSurveyDialog();
 
         FragmentTransaction ft = activity.getFragmentManager().beginTransaction();
@@ -80,13 +90,11 @@ public class Survey {
         }
     }
 
-    public void create(final Context context,
-                       final SurveyAvailabilityListener surveyAvailabilityListener) {
-
+    public void create(@NonNull final Context context,
+                       @Nullable final SurveyAvailabilityListener surveyAvailabilityListener) throws SurveyException {
 
         if (TextUtils.isEmpty(mPublisherUuid)) {
-            Logger.e(TAG, "publisher uuid should be empty");
-            return;
+            throw new SurveyException("publisher uuid should be empty, should initialize");
         }
 
         RequestManager requestManager = new RequestManager() {
