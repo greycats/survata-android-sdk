@@ -139,6 +139,9 @@ public class Survey {
             throw new SurveyException("publisher uuid should be empty, should initialize");
         }
 
+        // TODO: I don't really get why we need an abstract class here.  Just move this to createRequest in RequestManager
+        // In fact, just combine it into Networking
+
         RequestManager requestManager = new RequestManager() {
 
             @Override

@@ -4,6 +4,9 @@ import android.util.Log;
 
 import com.survata.BuildConfig;
 
+
+// TODO: Create a SurvataLogger interface, add a setLogger function to Survey.  If Logger is set
+// use the logger set by user, if not, use default Logger ("android.util.Log")
 public class Logger {
 
     private static SurveyDebugLog mSurveyDebugLog;
