@@ -37,6 +37,10 @@ public class Survey {
         mPublisherUuid = publisherUuid;
     }
 
+    // TODO: postal code is not passed in.  Postal code is generated from location.  Remove this setter.
+    // See: http://stackoverflow.com/questions/9409195/how-to-get-complete-address-from-latitude-and-longitude If location permission not granted,
+    // 1) do not ask for permission 2) do not attempt to get location (lat/lon)
+
     @Nullable
     public void setPostalCode(String postalCode) {
         mPostalCode = postalCode;
@@ -58,6 +62,7 @@ public class Survey {
      * survey status callback
      */
     public interface SurveyStatusListener {
+        // TODO: add a new method, called onEvent, these are events that happen during the survey but not at the survey end. Like Ready, Skipped, Started...
         void onResult(SurveyResult surveyResult);
     }
 
@@ -84,6 +89,13 @@ public class Survey {
         FAILED,
         NETWORK_NOT_AVAILABLE
     }
+
+    // TODO: create a new enum here "SurveyEvents", move "READY, SKIPPED, STARTED"
+
+    // TODO: create a new constructor here that takes in
+    // (Activity, String publisherId, String contentName) and a new constructor
+    // (Activity, String publisherId), make the default constructor private
+
 
     /**
      * present survey in webview

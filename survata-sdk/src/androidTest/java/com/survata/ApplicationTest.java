@@ -3,6 +3,8 @@ package com.survata;
 import android.app.Application;
 import android.test.ApplicationTestCase;
 
+
+// TODO: remove this class?
 /**
  * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
  */

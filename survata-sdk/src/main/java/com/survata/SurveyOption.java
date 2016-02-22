@@ -10,6 +10,7 @@ public class SurveyOption implements Serializable {
     protected String preview;
     protected String contentName;
 
+    // TODO: add javadoc
     public SurveyOption(String brand, String explainer, String preview, String contentName) {
         this.brand = brand;
         this.explainer = explainer;
@@ -17,6 +18,7 @@ public class SurveyOption implements Serializable {
         this.contentName = contentName;
     }
 
+    // TODO: move this to SurveyDialogFragment, no need to expose this at this class.
     public String description() {
         StringBuilder builder = new StringBuilder();
         if (!TextUtils.isEmpty(brand)) {
@@ -40,6 +42,7 @@ public class SurveyOption implements Serializable {
         return "{" + option + "}";
     }
 
+    // TODO: move this as well
     private void append(StringBuilder builder, String key, String value) {
         builder.append(key).append(":").append("\"").append(value).append("\"").append(",");
     }

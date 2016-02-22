@@ -5,6 +5,8 @@ import android.content.Context;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 
+// TODO: instead of making the queue a single static variable, make "Networking" a singleton,
+// a much more common pattern
 public class Networking {
 
     private volatile static RequestQueue sRequestQueue;
