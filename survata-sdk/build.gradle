@@ -18,6 +18,10 @@ android {
         }
     }
 
+    lintOptions {
+        abortOnError false
+    }
+
     publishNonDefault true
 }
 
@@ -38,7 +42,7 @@ publish {
     userOrg = 'evanliu1'
     groupId = 'com.survata.android'
     artifactId = 'library'
-    publishVersion = '1.0.1'
+    publishVersion = '1.0.2'
     desc = 'survata sdk'
     website = 'https://github.com/greycats/survata-android-sdk'
 }
