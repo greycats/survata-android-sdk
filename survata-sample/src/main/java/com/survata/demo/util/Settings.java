@@ -6,7 +6,7 @@ import android.preference.PreferenceManager;
 
 import com.survata.demo.R;
 
-public class SurveyUtils {
+public class Settings {
 
     public static String getPublisherId(Context context) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);

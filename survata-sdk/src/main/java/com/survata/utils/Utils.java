@@ -1,9 +1,13 @@
 package com.survata.utils;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Base64;
 
 import com.survata.R;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -11,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.util.Map;
 
 public class Utils {
 
@@ -21,6 +26,24 @@ public class Utils {
     private static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
 
     private static final int EOF = -1;
+
+    public static String parseParamMap(Map<String, String> params) {
+        JSONObject jsonObject = new JSONObject();
+        for (Map.Entry<String, String> entry : params.entrySet()) {
+            String value = entry.getValue();
+
+            if (!TextUtils.isEmpty(value)) {
+
+                String key = entry.getKey();
+                try {
+                    jsonObject.put(key, value);
+                } catch (JSONException e) {
+                    Logger.d(TAG, "parse param failed", e);
+                }
+            }
+        }
+        return jsonObject.toString();
+    }
 
     public static String getUserAgent(Context context) {
         String packageName = "Unknown";

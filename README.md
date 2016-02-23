@@ -6,60 +6,40 @@ Survata Android SDK
 - Android SDK v14
 
 # Setup #
-1.  if you are using Maven in your project, the jar is available on [Maven Central](http://search.maven.org/#artifactdetails%7Ccom.amplitude%7Candroid-sdk%7C2.5.0%7Cjar) using the following configuration in your pom.xml:
+1.  Add in your build.gradle file:
 
     ```
-    <dependency>
-      <groupId>com.survata.android</groupId>
-      <artifactId>library</artifactId>
-      <version>1.0.0</version>
-    </dependency>
+    compile 'com.survata.android:library:1.0.1'
     ```
-
-  Or if you are using gradle in your project, include in your build.gradle file:
-
-    ```
-    compile 'com.survata.android:library:1.0.0'
-    ```
-2.  import com.survata.Survey at the top:
+2.  Here is a brief demo to bind Survey to a button:
 
     ```java
-    import com.survata.Survey;
-    ```
-3.  initialize Survata:
-
-    ```java
-    private Survey mSurvey = new Survey();
-    ```
-4.  check survey
-
-    ```java
-    mSurvey.setPublisherUuid(publisherUuid);
-    // optional
-    mSurvey.setPostalCode(postalCode);
-    mSurvey.create(this,
-                    contentName,
+     public void checkSurvey() {
+            Context context = getContext();
+            SurveyDebugOption option = new SurveyDebugOption(publisherId);
+    
+            mSurvey = new Survey(option);
+            mSurvey.create(getActivity(),
                     new Survey.SurveyAvailabilityListener() {
                         @Override
                         public void onSurveyAvailable(Survey.SurveyAvailability surveyAvailability) {
+                           
                             if (surveyAvailability == Survey.SurveyAvailability.AVAILABILITY) {
                                 // do something
-                            } else {
-
                             }
                         }
                     });
-    ```
-5.  show survey
-
-    ```java
-    SurveyOption surveyOption = new SurveyOption(brand, explainer, preview);
-    mSurvey.createSurveyWall(MainActivity.this, publisher, surveyOption, new Survey.SurveyStatusListener() {
-                @Override
-                public void onResult(Survey.SurveyResult surveyResult) {
-                    if (surveyResult == Survey.SurveyResult.COMPLETED) {
-                        // do something
+        }
+        
+     private void showSurvey() {                
+            mSurvey.createSurveyWall(getActivity(), new Survey.SurveyStatusListener() {
+                    @Override
+                    public void onResult(Survey.SurveyResult surveyResult) {
+                               
+                        if (surveyResult == Survey.SurveyResult.COMPLETED) {
+                            // do something
+                        }
                     }
-                }
-            });
+                });
+            }
     ```

@@ -7,48 +7,61 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
-import com.android.volley.Request;
 import com.android.volley.VolleyError;
-import com.survata.network.RequestManager;
+import com.survata.network.Networking;
 import com.survata.network.SurveyRequest;
 import com.survata.ui.SurveyDialogFragment;
+import com.survata.utils.Geocode;
 import com.survata.utils.Logger;
+import com.survata.utils.NetworkUtils;
 import com.survata.utils.Utils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.Map;
 
 public class Survey {
     private static final String TAG = "Survey";
 
     private static final String CREATE_SURVEY_URL = "https://surveywall-api.survata.com/rest/interview-check/create";
 
-    @NonNull
-    private String mPublisherUuid;
+    private final SurveyOption mSurveyOption;
 
-    @Nullable
-    private String mPostalCode;
+    private String mZipCode;
 
-    @Nullable
-    private String mContentName;
-
-    @NonNull
-    public void setPublisherUuid(String publisherUuid) {
-        mPublisherUuid = publisherUuid;
+    public Survey(SurveyOption surveyOption) {
+        mSurveyOption = surveyOption;
     }
 
-    // TODO: postal code is not passed in.  Postal code is generated from location.  Remove this setter.
-    // See: http://stackoverflow.com/questions/9409195/how-to-get-complete-address-from-latitude-and-longitude If location permission not granted,
-    // 1) do not ask for permission 2) do not attempt to get location (lat/lon)
-
-    @Nullable
-    public void setPostalCode(String postalCode) {
-        mPostalCode = postalCode;
+    /**
+     * log to client
+     * @param survataLogger
+     */
+    public void setSurvataLogger(SurvataLogger survataLogger) {
+        Logger.setmSurvataLogger(survataLogger);
     }
 
-    @Nullable
-    public void setContentName(String contentName) {
-        mContentName = contentName;
+    public interface SurvataLogger {
+        void surveyLogV(String tag, String msg);
+
+        void surveyLogV(String tag, String msg, Throwable tr);
+
+        void surveyLogD(String tag, String msg);
+
+        void surveyLogD(String tag, String msg, Throwable tr);
+
+        void surveyLogI(String tag, String msg);
+
+        void surveyLogI(String tag, String msg, Throwable tr);
+
+        void surveyLogW(String tag, String msg);
+
+        void surveyLogW(String tag, String msg, Throwable tr);
+
+        void surveyLogE(String tag, String msg);
+
+        void surveyLogE(String tag, String msg, Throwable tr);
     }
 
     /**
@@ -62,8 +75,7 @@ public class Survey {
      * survey status callback
      */
     public interface SurveyStatusListener {
-        // TODO: add a new method, called onEvent, these are events that happen during the survey but not at the survey end. Like Ready, Skipped, Started...
-        void onResult(SurveyResult surveyResult);
+        void onEvent(SurveyEvents surveyEvents);
     }
 
     /**
@@ -79,41 +91,39 @@ public class Survey {
     /**
      * enum status returned in present api
      */
-    public enum SurveyResult {
-        READY,
-        STARTED,
+    public enum SurveyEvents {
         COMPLETED,
         SKIPPED,
         CANCELED,
         CREDIT_EARNED,
-        FAILED,
         NETWORK_NOT_AVAILABLE
     }
 
-    // TODO: create a new enum here "SurveyEvents", move "READY, SKIPPED, STARTED"
+    public interface SurveyDebugOptionInterface {
+        String getPreview();
 
-    // TODO: create a new constructor here that takes in
-    // (Activity, String publisherId, String contentName) and a new constructor
-    // (Activity, String publisherId), make the default constructor private
+        String getZipcode();
 
+        boolean getSendZipcode();
+    }
 
     /**
      * present survey in webview
      *
-     * @param activity             activity
-     * @param surveyOption         creation options
-     * @param surveyStatusListener callbacks survey result
-     * @throws SurveyException
+     * @param activity
+     * @param surveyStatusListener
      */
     public void createSurveyWall(@NonNull final Activity activity,
-                                 @NonNull final SurveyOption surveyOption,
-                                 @Nullable final SurveyStatusListener surveyStatusListener) throws SurveyException {
+                                 @Nullable final SurveyStatusListener surveyStatusListener) {
 
-        if (TextUtils.isEmpty(mPublisherUuid)) {
-            throw new SurveyException("publisher uuid should be empty, should initialize");
+        if (!NetworkUtils.isNetworkConnected(activity)) {
+
+            if (surveyStatusListener != null) {
+                surveyStatusListener.onEvent(SurveyEvents.NETWORK_NOT_AVAILABLE);
+            }
         }
 
-        SurveyDialogFragment dialogFragment = SurveyDialogFragment.newInstance(mPublisherUuid, surveyOption);
+        SurveyDialogFragment dialogFragment = SurveyDialogFragment.newInstance(mSurveyOption);
         dialogFragment.dismissSurveyDialog();
 
         FragmentTransaction ft = activity.getFragmentManager().beginTransaction();
@@ -130,87 +140,92 @@ public class Survey {
      *
      * @param context                    context
      * @param surveyAvailabilityListener callback availability
-     * @throws SurveyException
      */
     public void create(@NonNull final Context context,
-                       @Nullable final SurveyAvailabilityListener surveyAvailabilityListener) throws SurveyException {
+                       @Nullable final SurveyAvailabilityListener surveyAvailabilityListener) {
 
-        if (TextUtils.isEmpty(mPublisherUuid)) {
-            throw new SurveyException("publisher uuid should be empty, should initialize");
+        if (!NetworkUtils.isNetworkConnected(context)) {
+
+            if (surveyAvailabilityListener != null) {
+                surveyAvailabilityListener.onSurveyAvailable(SurveyAvailability.NETWORK_NOT_AVAILABLE);
+            }
         }
 
-        // TODO: I don't really get why we need an abstract class here.  Just move this to createRequest in RequestManager
-        // In fact, just combine it into Networking
+        if (mSurveyOption instanceof SurveyDebugOptionInterface) {
 
-        RequestManager requestManager = new RequestManager() {
+            boolean sendZipcode = ((SurveyDebugOptionInterface) mSurveyOption).getSendZipcode();
 
-            @Override
-            public Request createRequest() {
+            if (sendZipcode) {
 
-                try {
-                    JSONObject jsonObject = new JSONObject();
-
-                    if (!TextUtils.isEmpty(mContentName)) {
-                        jsonObject.put("contentName", mContentName);
-                    }
-
-                    jsonObject.put("publisherUuid", mPublisherUuid);
-
-                    if (!TextUtils.isEmpty(mPostalCode)) {
-                        jsonObject.put("postalCode", mPostalCode);
-                    }
-
-                    return new SurveyRequest(CREATE_SURVEY_URL,
-                            jsonObject.toString(),
-                            Utils.getUserAgent(context),
-                            new SurveyRequest.SurveyListener() {
-                                @Override
-                                public void onResponse(JSONObject response) {
-                                    boolean valid = false;
-                                    try {
-                                        valid = response.getBoolean("valid");
-                                    } catch (JSONException e) {
-                                        Logger.e(TAG, "parse json failed", e);
-                                    }
-
-                                    if (valid) {
-                                        Logger.d(TAG, "has available survey");
-                                    } else {
-                                        Logger.d(TAG, "no survey available");
-                                    }
-
-                                    if (surveyAvailabilityListener != null) {
-                                        SurveyAvailability surveyAvailability = valid ? SurveyAvailability.AVAILABILITY : SurveyAvailability.NOT_AVAILABLE;
-                                        surveyAvailabilityListener.onSurveyAvailable(surveyAvailability);
-                                    }
-                                }
-
-                                @Override
-                                public void onErrorResponse(VolleyError error) {
-
-                                    Logger.d(TAG, "check survey availability failed", error);
-
-                                    if (surveyAvailabilityListener != null) {
-                                        surveyAvailabilityListener.onSurveyAvailable(SurveyAvailability.SERVER_ERROR);
-                                    }
-                                }
-                            });
-                } catch (JSONException e) {
-                    Logger.e(TAG, "put json object failed", e);
+                String zipcode = ((SurveyDebugOptionInterface) mSurveyOption).getZipcode();
+                if (!TextUtils.isEmpty(zipcode)) {
+                    mZipCode = zipcode;
+                    startCreate(context, surveyAvailabilityListener);
+                } else {
+                    new Geocode().get(context, new Geocode.GeocodeCallback() {
+                        @Override
+                        public void onZipcodeFind(String zipcode) {
+                            if (!TextUtils.isEmpty(zipcode)) {
+                                mZipCode = zipcode;
+                            }
+                            startCreate(context, surveyAvailabilityListener);
+                        }
+                    });
                 }
-                return null;
             }
-        };
-
-        requestManager.makeRequest(context);
+        } else {
+            startCreate(context, surveyAvailabilityListener);
+        }
     }
 
-    /**
-     * handle all event logs
-     * @param surveyDebugLog
-     */
-    public void setSurveyDebugLog(Logger.SurveyDebugLog surveyDebugLog) {
-        Logger.setSurveyDebugLog(surveyDebugLog);
+    private void startCreate(final Context context,
+                             final SurveyAvailabilityListener surveyAvailabilityListener) {
+
+        Map<String, String> params = mSurveyOption.getParams();
+
+        String publisher = mSurveyOption.publisher;
+        String contentName = mSurveyOption.contentName;
+
+        params.put("publisherUuid", publisher);
+        params.put("contentName", contentName);
+        params.put("postalCode", mZipCode);
+
+        Networking networking = Networking.getInstance();
+        networking.request(context,
+                CREATE_SURVEY_URL,
+                Utils.parseParamMap(params),
+                new SurveyRequest.SurveyListener() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        boolean valid = false;
+                        try {
+                            valid = response.getBoolean("valid");
+                        } catch (JSONException e) {
+                            Logger.e(TAG, "parse json failed", e);
+                        }
+
+                        if (valid) {
+                            Logger.d(TAG, "has available survey");
+                        } else {
+                            Logger.d(TAG, "no survey available");
+                        }
+
+                        if (surveyAvailabilityListener != null) {
+                            SurveyAvailability surveyAvailability = valid ? SurveyAvailability.AVAILABILITY : SurveyAvailability.NOT_AVAILABLE;
+                            surveyAvailabilityListener.onSurveyAvailable(surveyAvailability);
+                        }
+                    }
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        Logger.d(TAG, "check survey availability failed", error);
+
+                        if (surveyAvailabilityListener != null) {
+                            surveyAvailabilityListener.onSurveyAvailable(SurveyAvailability.SERVER_ERROR);
+                        }
+                    }
+                });
     }
 
 }

@@ -2,16 +2,22 @@ package com.survata.network;
 
 import android.content.Context;
 
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import com.survata.utils.Utils;
 
-// TODO: instead of making the queue a single static variable, make "Networking" a singleton,
-// a much more common pattern
 public class Networking {
+
+    private static Networking mNetworking = new Networking();
 
     private volatile static RequestQueue sRequestQueue;
 
-    public static RequestQueue getRequestQueue(Context context) {
+    public static Networking getInstance() {
+        return mNetworking;
+    }
+
+    public RequestQueue getRequestQueue(Context context) {
         RequestQueue requestQueue = sRequestQueue;
         if (requestQueue == null) {
             synchronized (Networking.class) {
@@ -24,6 +30,20 @@ public class Networking {
             }
         }
         return requestQueue;
+    }
+
+    public void request(final Context context,
+                        final String url,
+                        final String requestBody,
+                        final SurveyRequest.SurveyListener surveyListener) {
+        RequestManager requestManager = new RequestManager() {
+
+            @Override
+            public Request createRequest() {
+                return new SurveyRequest(url, requestBody, Utils.getUserAgent(context), surveyListener);
+            }
+        };
+        requestManager.makeRequest(context);
     }
 
 }

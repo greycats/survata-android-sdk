@@ -3,127 +3,113 @@ package com.survata.utils;
 import android.util.Log;
 
 import com.survata.BuildConfig;
+import com.survata.Survey;
 
-
-// TODO: Create a SurvataLogger interface, add a setLogger function to Survey.  If Logger is set
-// use the logger set by user, if not, use default Logger ("android.util.Log")
 public class Logger {
 
-    private static SurveyDebugLog mSurveyDebugLog;
+    private static Survey.SurvataLogger mSurvataLogger;
 
-    public static void setSurveyDebugLog(SurveyDebugLog mSurveyDebugLog) {
-        Logger.mSurveyDebugLog = mSurveyDebugLog;
-    }
-
-    public interface SurveyDebugLog {
-        void surveyLogV(String tag, String msg);
-
-        void surveyLogV(String tag, String msg, Throwable tr);
-
-        void surveyLogD(String tag, String msg);
-
-        void surveyLogD(String tag, String msg, Throwable tr);
-
-        void surveyLogI(String tag, String msg);
-
-        void surveyLogI(String tag, String msg, Throwable tr);
-
-        void surveyLogW(String tag, String msg);
-
-        void surveyLogW(String tag, String msg, Throwable tr);
-
-        void surveyLogE(String tag, String msg);
-
-        void surveyLogE(String tag, String msg, Throwable tr);
+    public static void setmSurvataLogger(Survey.SurvataLogger mSurvataLogger) {
+        Logger.mSurvataLogger = mSurvataLogger;
     }
 
     public static void v(String tag, String msg) {
         if (BuildConfig.DEBUG) {
-            if (mSurveyDebugLog != null) {
-                mSurveyDebugLog.surveyLogV(tag, msg);
+            if (mSurvataLogger != null) {
+                mSurvataLogger.surveyLogV(tag, msg);
+            } else {
+                Log.v(tag, msg);
             }
-            Log.v(tag, msg);
         }
     }
 
     public static void v(String tag, String msg, Throwable tr) {
         if (BuildConfig.DEBUG) {
-            if (mSurveyDebugLog != null) {
-                mSurveyDebugLog.surveyLogV(tag, msg, tr);
+            if (mSurvataLogger != null) {
+                mSurvataLogger.surveyLogV(tag, msg, tr);
+            } else {
+                Log.v(tag, msg, tr);
             }
-            Log.v(tag, msg, tr);
         }
     }
 
     public static void d(String tag, String msg) {
         if (BuildConfig.DEBUG) {
-            if (mSurveyDebugLog != null) {
-                mSurveyDebugLog.surveyLogD(tag, msg);
+            if (mSurvataLogger != null) {
+                mSurvataLogger.surveyLogD(tag, msg);
+            } else {
+                Log.d(tag, msg);
             }
-            Log.d(tag, msg);
         }
     }
 
     public static void d(String tag, String msg, Throwable tr) {
         if (BuildConfig.DEBUG) {
-            if (mSurveyDebugLog != null) {
-                mSurveyDebugLog.surveyLogD(tag, msg, tr);
+            if (mSurvataLogger != null) {
+                mSurvataLogger.surveyLogD(tag, msg, tr);
+            } else {
+                Log.d(tag, msg, tr);
             }
-            Log.d(tag, msg, tr);
         }
     }
 
     public static void i(String tag, String msg) {
         if (BuildConfig.DEBUG) {
-            if (mSurveyDebugLog != null) {
-                mSurveyDebugLog.surveyLogI(tag, msg);
+            if (mSurvataLogger != null) {
+                mSurvataLogger.surveyLogI(tag, msg);
+            } else {
+                Log.i(tag, msg);
             }
-            Log.i(tag, msg);
         }
     }
 
     public static void i(String tag, String msg, Throwable tr) {
         if (BuildConfig.DEBUG) {
-            if (mSurveyDebugLog != null) {
-                mSurveyDebugLog.surveyLogI(tag, msg, tr);
+            if (mSurvataLogger != null) {
+                mSurvataLogger.surveyLogI(tag, msg, tr);
+            } else {
+                Log.i(tag, msg, tr);
             }
-            Log.i(tag, msg, tr);
         }
     }
 
     public static void w(String tag, String msg) {
         if (BuildConfig.DEBUG) {
-            if (mSurveyDebugLog != null) {
-                mSurveyDebugLog.surveyLogW(tag, msg);
+            if (mSurvataLogger != null) {
+                mSurvataLogger.surveyLogW(tag, msg);
+            } else {
+                Log.w(tag, msg);
             }
-            Log.w(tag, msg);
         }
     }
 
     public static void w(String tag, String msg, Throwable tr) {
         if (BuildConfig.DEBUG) {
-            if (mSurveyDebugLog != null) {
-                mSurveyDebugLog.surveyLogW(tag, msg, tr);
+            if (mSurvataLogger != null) {
+                mSurvataLogger.surveyLogW(tag, msg, tr);
+            } else {
+                Log.w(tag, msg, tr);
             }
-            Log.w(tag, msg, tr);
         }
     }
 
     public static void e(String tag, String msg) {
         if (BuildConfig.DEBUG) {
-            if (mSurveyDebugLog != null) {
-                mSurveyDebugLog.surveyLogE(tag, msg);
+            if (mSurvataLogger != null) {
+                mSurvataLogger.surveyLogE(tag, msg);
+            } else {
+                Log.e(tag, msg);
             }
-            Log.e(tag, msg);
         }
     }
 
     public static void e(String tag, String msg, Throwable tr) {
         if (BuildConfig.DEBUG) {
-            if (mSurveyDebugLog != null) {
-                mSurveyDebugLog.surveyLogE(tag, msg, tr);
+            if (mSurvataLogger != null) {
+                mSurvataLogger.surveyLogE(tag, msg, tr);
+            } else {
+                Log.e(tag, msg, tr);
             }
-            Log.e(tag, msg, tr);
         }
     }
 

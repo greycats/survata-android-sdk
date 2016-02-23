@@ -22,7 +22,8 @@ public abstract class RequestManager {
             return;
         }
 
-        RequestQueue requestQueue = Networking.getRequestQueue(context);
+        Networking networking = Networking.getInstance();
+        RequestQueue requestQueue = networking.getRequestQueue(context);
         if (requestQueue == null) {
             Logger.d(TAG, "RequestQueue is null");
             return;

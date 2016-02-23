@@ -13,7 +13,7 @@ import android.support.v7.preference.PreferenceScreen;
 import android.view.View;
 
 import com.survata.demo.R;
-import com.survata.demo.util.SurveyUtils;
+import com.survata.demo.util.Settings;
 
 public class SettingFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -33,29 +33,29 @@ public class SettingFragment extends PreferenceFragmentCompat implements SharedP
 
         String publisherIdString = resources.getString(R.string.publisher_id);
         Preference preference = findPreference(publisherIdString);
-        preference.setSummary(SurveyUtils.getPublisherId(context));
+        preference.setSummary(Settings.getPublisherId(context));
 
         String previewIdString = resources.getString(R.string.preview_id);
         preference = findPreference(previewIdString);
-        preference.setSummary(SurveyUtils.getPreviewId(context));
+        preference.setSummary(Settings.getPreviewId(context));
 
         String contentNameString = resources.getString(R.string.content_name);
         preference = findPreference(contentNameString);
-        preference.setSummary(SurveyUtils.getContentName(context));
+        preference.setSummary(Settings.getContentName(context));
 
         String contentNameToggle = resources.getString(R.string.content_name_toggle);
         preference = findPreference(contentNameToggle);
-        boolean contentNameEnable = SurveyUtils.getContentNameEnable(context);
+        boolean contentNameEnable = Settings.getContentNameEnable(context);
         ((SwitchPreference) preference).setChecked(contentNameEnable);
         hideOrShowContentName(contentNameEnable);
 
         String zipCodeString = resources.getString(R.string.zip_code);
         preference = findPreference(zipCodeString);
-        preference.setSummary(SurveyUtils.getZipCode(context));
+        preference.setSummary(Settings.getZipCode(context));
 
         String zipCodeToggle = resources.getString(R.string.zip_code_toggle);
         preference = findPreference(zipCodeToggle);
-        boolean zipCodeEnable = SurveyUtils.getZipCodeEnable(context);
+        boolean zipCodeEnable = Settings.getZipCodeEnable(context);
         ((SwitchPreference) preference).setChecked(zipCodeEnable);
         hideOrShowZipCode(zipCodeEnable);
 

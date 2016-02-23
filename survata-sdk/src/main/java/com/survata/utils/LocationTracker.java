@@ -1,4 +1,4 @@
-package com.survata.demo.util;
+package com.survata.utils;
 
 import android.Manifest;
 import android.content.Context;
