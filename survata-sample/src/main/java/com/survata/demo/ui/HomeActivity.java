@@ -67,11 +67,11 @@ public class HomeActivity extends AppCompatActivity implements ShakeDetector.Lis
         mTabLayout.setTabMode(TabLayout.MODE_FIXED);
         mTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-        DemoFragment surveyFragment = mHomePagerAdapter.getSurveyFragment();
+        DemoFragment demoFragment = mHomePagerAdapter.getSurveyFragment();
         SettingFragment settingFragment = mHomePagerAdapter.getSettingFragment();
         TestFragment testFragment = mHomePagerAdapter.getTestFragment();
 
-        TabLayout.Tab surveyTab = createTabForFragment(surveyFragment.getTitleResId());
+        TabLayout.Tab surveyTab = createTabForFragment(demoFragment.getTitleResId());
         TabLayout.Tab settingTab = createTabForFragment(settingFragment.getTitleResId());
         TabLayout.Tab testTab = createTabForFragment(testFragment.getTitleResId());
 
@@ -79,9 +79,9 @@ public class HomeActivity extends AppCompatActivity implements ShakeDetector.Lis
         mTabs.add(settingTab);
         mTabs.add(testTab);
 
-        mTabLayout.addTab(surveyTab, surveyFragment.INDEX);
-        mTabLayout.addTab(settingTab, settingFragment.INDEX);
-        mTabLayout.addTab(testTab, testFragment.INDEX);
+        mTabLayout.addTab(surveyTab, DemoFragment.INDEX);
+        mTabLayout.addTab(settingTab, SettingFragment.INDEX);
+        mTabLayout.addTab(testTab, TestFragment.INDEX);
 
         for (int i = 0; i < mTabLayout.getTabCount(); i++) {
             TabLayout.Tab tab = mTabLayout.getTabAt(i);
