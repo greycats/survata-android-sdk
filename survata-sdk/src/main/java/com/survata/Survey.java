@@ -30,12 +30,16 @@ public class Survey {
 
     private String mZipCode;
 
+    /**
+     * Initialize survey
+     * @param surveyOption creation options
+     */
     public Survey(SurveyOption surveyOption) {
         mSurveyOption = surveyOption;
     }
 
     /**
-     * log to client
+     * if you need log to client, you can call this method.
      * @param survataLogger
      */
     public void setSurvataLogger(SurvataLogger survataLogger) {
@@ -43,60 +47,60 @@ public class Survey {
     }
 
     public interface SurvataLogger {
-        void surveyLogV(String tag, String msg);
+        void surveyLogVerbose(String tag, String msg);
 
-        void surveyLogV(String tag, String msg, Throwable tr);
+        void surveyLogVerbose(String tag, String msg, Throwable tr);
 
-        void surveyLogD(String tag, String msg);
+        void surveyLogDebug(String tag, String msg);
 
-        void surveyLogD(String tag, String msg, Throwable tr);
+        void surveyLogDebug(String tag, String msg, Throwable tr);
 
-        void surveyLogI(String tag, String msg);
+        void surveyLogInfo(String tag, String msg);
 
-        void surveyLogI(String tag, String msg, Throwable tr);
+        void surveyLogInfo(String tag, String msg, Throwable tr);
 
-        void surveyLogW(String tag, String msg);
+        void surveyLogWarn(String tag, String msg);
 
-        void surveyLogW(String tag, String msg, Throwable tr);
+        void surveyLogWarn(String tag, String msg, Throwable tr);
 
-        void surveyLogE(String tag, String msg);
+        void surveyLogError(String tag, String msg);
 
-        void surveyLogE(String tag, String msg, Throwable tr);
+        void surveyLogError(String tag, String msg, Throwable tr);
     }
 
     /**
-     * survey availability callback
+     * survey availability callback when create survey
      */
     public interface SurveyAvailabilityListener {
         void onSurveyAvailable(SurveyAvailability surveyAvailability);
     }
 
     /**
-     * survey status callback
+     * enum status returned in create api
+     */
+    public enum SurveyAvailability {
+        AVAILABILITY,                 // survey is available
+        NOT_AVAILABLE,                // survey is not available
+        SERVER_ERROR,                 // server error when check survey availability
+        NETWORK_NOT_AVAILABLE         // network is not available
+    }
+
+    /**
+     * survey event callback when show survey
      */
     public interface SurveyStatusListener {
         void onEvent(SurveyEvents surveyEvents);
     }
 
     /**
-     * enum status returned in create api
-     */
-    public enum SurveyAvailability {
-        AVAILABILITY,
-        NOT_AVAILABLE,
-        SERVER_ERROR,
-        NETWORK_NOT_AVAILABLE
-    }
-
-    /**
      * enum status returned in present api
      */
     public enum SurveyEvents {
-        COMPLETED,
-        SKIPPED,
-        CANCELED,
-        CREDIT_EARNED,
-        NETWORK_NOT_AVAILABLE
+        COMPLETED,                    // survey is completed
+        SKIPPED,                      // user skip the survey
+        CANCELED,                     // user cancel the survey
+        CREDIT_EARNED,                // survey loaded done
+        NETWORK_NOT_AVAILABLE         // network is not available
     }
 
     public interface SurveyDebugOptionInterface {
@@ -108,10 +112,12 @@ public class Survey {
     }
 
     /**
-     * present survey in webview
+     * To present survey over DialogFragment.
      *
-     * @param activity
-     * @param surveyStatusListener
+     * @param activity activity
+     * @param surveyStatusListener callbacks survey result
+     *
+     * Note: client code should hold this instance before callback
      */
     public void createSurveyWall(@NonNull final Activity activity,
                                  @Nullable final SurveyStatusListener surveyStatusListener) {
@@ -135,11 +141,11 @@ public class Survey {
     }
 
     /**
-     * call this function to initialize Survata
-     * e.g. use this to determine wether to show the survata button and the button will trigger presentation
+     * cause the availability can be changed from time to time, please use this method right before `createSurveyWall`. Results of presentation on availability other than `.Available` is not guaranteed.
+     * e.g. use this to determine whether to show the survata button and the button will trigger presentation
      *
      * @param context                    context
-     * @param surveyAvailabilityListener callback availability
+     * @param surveyAvailabilityListener closure to callback availability
      */
     public void create(@NonNull final Context context,
                        @Nullable final SurveyAvailabilityListener surveyAvailabilityListener) {

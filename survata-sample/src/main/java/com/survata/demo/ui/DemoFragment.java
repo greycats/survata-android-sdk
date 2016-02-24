@@ -32,53 +32,54 @@ public class DemoFragment extends Fragment {
     private boolean mBlurred = false;
 
     private Survey.SurvataLogger mSurvataLogger = new Survey.SurvataLogger() {
+
         @Override
-        public void surveyLogV(String tag, String msg) {
+        public void surveyLogVerbose(String tag, String msg) {
+            
+        }
+
+        @Override
+        public void surveyLogVerbose(String tag, String msg, Throwable tr) {
 
         }
 
         @Override
-        public void surveyLogV(String tag, String msg, Throwable tr) {
+        public void surveyLogDebug(String tag, String msg) {
 
         }
 
         @Override
-        public void surveyLogD(String tag, String msg) {
+        public void surveyLogDebug(String tag, String msg, Throwable tr) {
 
         }
 
         @Override
-        public void surveyLogD(String tag, String msg, Throwable tr) {
+        public void surveyLogInfo(String tag, String msg) {
 
         }
 
         @Override
-        public void surveyLogI(String tag, String msg) {
+        public void surveyLogInfo(String tag, String msg, Throwable tr) {
 
         }
 
         @Override
-        public void surveyLogI(String tag, String msg, Throwable tr) {
+        public void surveyLogWarn(String tag, String msg) {
 
         }
 
         @Override
-        public void surveyLogW(String tag, String msg) {
+        public void surveyLogWarn(String tag, String msg, Throwable tr) {
 
         }
 
         @Override
-        public void surveyLogW(String tag, String msg, Throwable tr) {
+        public void surveyLogError(String tag, String msg) {
 
         }
 
         @Override
-        public void surveyLogE(String tag, String msg) {
-
-        }
-
-        @Override
-        public void surveyLogE(String tag, String msg, Throwable tr) {
+        public void surveyLogError(String tag, String msg, Throwable tr) {
 
         }
     };

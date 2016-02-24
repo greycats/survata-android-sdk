@@ -16,7 +16,7 @@ public class Logger {
     public static void v(String tag, String msg) {
         if (BuildConfig.DEBUG) {
             if (mSurvataLogger != null) {
-                mSurvataLogger.surveyLogV(tag, msg);
+                mSurvataLogger.surveyLogVerbose(tag, msg);
             } else {
                 Log.v(tag, msg);
             }
@@ -26,7 +26,7 @@ public class Logger {
     public static void v(String tag, String msg, Throwable tr) {
         if (BuildConfig.DEBUG) {
             if (mSurvataLogger != null) {
-                mSurvataLogger.surveyLogV(tag, msg, tr);
+                mSurvataLogger.surveyLogVerbose(tag, msg, tr);
             } else {
                 Log.v(tag, msg, tr);
             }
@@ -36,7 +36,7 @@ public class Logger {
     public static void d(String tag, String msg) {
         if (BuildConfig.DEBUG) {
             if (mSurvataLogger != null) {
-                mSurvataLogger.surveyLogD(tag, msg);
+                mSurvataLogger.surveyLogDebug(tag, msg);
             } else {
                 Log.d(tag, msg);
             }
@@ -46,7 +46,7 @@ public class Logger {
     public static void d(String tag, String msg, Throwable tr) {
         if (BuildConfig.DEBUG) {
             if (mSurvataLogger != null) {
-                mSurvataLogger.surveyLogD(tag, msg, tr);
+                mSurvataLogger.surveyLogDebug(tag, msg, tr);
             } else {
                 Log.d(tag, msg, tr);
             }
@@ -56,7 +56,7 @@ public class Logger {
     public static void i(String tag, String msg) {
         if (BuildConfig.DEBUG) {
             if (mSurvataLogger != null) {
-                mSurvataLogger.surveyLogI(tag, msg);
+                mSurvataLogger.surveyLogInfo(tag, msg);
             } else {
                 Log.i(tag, msg);
             }
@@ -66,7 +66,7 @@ public class Logger {
     public static void i(String tag, String msg, Throwable tr) {
         if (BuildConfig.DEBUG) {
             if (mSurvataLogger != null) {
-                mSurvataLogger.surveyLogI(tag, msg, tr);
+                mSurvataLogger.surveyLogInfo(tag, msg, tr);
             } else {
                 Log.i(tag, msg, tr);
             }
@@ -76,7 +76,7 @@ public class Logger {
     public static void w(String tag, String msg) {
         if (BuildConfig.DEBUG) {
             if (mSurvataLogger != null) {
-                mSurvataLogger.surveyLogW(tag, msg);
+                mSurvataLogger.surveyLogWarn(tag, msg);
             } else {
                 Log.w(tag, msg);
             }
@@ -86,7 +86,7 @@ public class Logger {
     public static void w(String tag, String msg, Throwable tr) {
         if (BuildConfig.DEBUG) {
             if (mSurvataLogger != null) {
-                mSurvataLogger.surveyLogW(tag, msg, tr);
+                mSurvataLogger.surveyLogWarn(tag, msg, tr);
             } else {
                 Log.w(tag, msg, tr);
             }
@@ -96,7 +96,7 @@ public class Logger {
     public static void e(String tag, String msg) {
         if (BuildConfig.DEBUG) {
             if (mSurvataLogger != null) {
-                mSurvataLogger.surveyLogE(tag, msg);
+                mSurvataLogger.surveyLogError(tag, msg);
             } else {
                 Log.e(tag, msg);
             }
@@ -106,7 +106,7 @@ public class Logger {
     public static void e(String tag, String msg, Throwable tr) {
         if (BuildConfig.DEBUG) {
             if (mSurvataLogger != null) {
-                mSurvataLogger.surveyLogE(tag, msg, tr);
+                mSurvataLogger.surveyLogError(tag, msg, tr);
             } else {
                 Log.e(tag, msg, tr);
             }
