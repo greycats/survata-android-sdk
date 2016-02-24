@@ -8,12 +8,12 @@ import android.support.v4.content.ContextCompat;
 
 public class Geocode {
 
-    private LocationTracker mLocationTracker;
-
     private static final String TAG = "Geocode";
 
+    private LocationTracker mLocationTracker;
+
     public interface GeocodeCallback {
-        void onZipcodeFind(String zipcode);
+        void onZipCodeFind(String zipCode);
     }
 
     public void get(final Context context, final GeocodeCallback geocodeCallback) {
@@ -22,26 +22,24 @@ public class Geocode {
             // You need to ask the user to enable the permissions
             Logger.e(TAG, "need permission");
 
-            geocodeCallback.onZipcodeFind("");
+            geocodeCallback.onZipCodeFind("");
         } else {
             mLocationTracker = new LocationTracker(context) {
                 @Override
                 public void onLocationFound(Location location) {
                     Logger.e(TAG, "onLocationFound " + location);
                     mLocationTracker.stopListening();
-                    geocodeCallback.onZipcodeFind(mLocationTracker.getPostalCode(context, location));
+                    geocodeCallback.onZipCodeFind(mLocationTracker.getPostalCode(context, location));
                 }
 
                 @Override
                 public void onTimeout() {
                     Logger.e(TAG, "onLocationFound timeout");
 
-                    geocodeCallback.onZipcodeFind("");
+                    geocodeCallback.onZipCodeFind("");
                 }
             };
             mLocationTracker.startListening();
         }
     }
-
-
 }

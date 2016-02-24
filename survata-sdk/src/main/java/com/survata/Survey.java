@@ -129,7 +129,7 @@ public class Survey {
             }
         }
 
-        SurveyDialogFragment dialogFragment = SurveyDialogFragment.newInstance(mSurveyOption);
+        SurveyDialogFragment dialogFragment = SurveyDialogFragment.newInstance(mSurveyOption, mZipCode);
         dialogFragment.dismissSurveyDialog();
 
         FragmentTransaction ft = activity.getFragmentManager().beginTransaction();
@@ -170,7 +170,7 @@ public class Survey {
                 } else {
                     new Geocode().get(context, new Geocode.GeocodeCallback() {
                         @Override
-                        public void onZipcodeFind(String zipcode) {
+                        public void onZipCodeFind(String zipcode) {
                             if (!TextUtils.isEmpty(zipcode)) {
                                 mZipCode = zipcode;
                             }

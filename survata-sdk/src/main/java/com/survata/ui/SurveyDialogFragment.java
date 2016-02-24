@@ -26,16 +26,20 @@ import com.survata.SurveyOption;
 import com.survata.utils.Logger;
 import com.survata.utils.Utils;
 
+import java.util.Map;
+
 public class SurveyDialogFragment extends DialogFragment {
 
     public static final String TAG = "SurveyDialogFragment";
     private static final String SURVEY_OPTION = "SurveyOption";
+    private static final String ZIP_CODE = "zipcode";
     private static final String JS_INTERFACE_NAME = "Android";
 
     private WebView mWebView;
     private ImageView mCloseImage;
 
     private SurveyOption mSurveyOption;
+    private String mZipCode;
 
     private Survey.SurveyStatusListener mSurveyStatusListener;
 
@@ -45,11 +49,12 @@ public class SurveyDialogFragment extends DialogFragment {
         mSurveyStatusListener = surveyStatusListener;
     }
 
-    public static SurveyDialogFragment newInstance(SurveyOption surveyOption) {
+    public static SurveyDialogFragment newInstance(SurveyOption surveyOption, String zipCode) {
         SurveyDialogFragment dialogFragment = new SurveyDialogFragment();
         dialogFragment.setStyle(DialogFragment.STYLE_NORMAL, R.style.CustomDialog);
         Bundle bundle = new Bundle();
         bundle.putSerializable(SURVEY_OPTION, surveyOption);
+        bundle.putSerializable(ZIP_CODE, zipCode);
         dialogFragment.setArguments(bundle);
         return dialogFragment;
     }
@@ -61,6 +66,7 @@ public class SurveyDialogFragment extends DialogFragment {
         Bundle bundle = getArguments();
         if (bundle != null) {
             mSurveyOption = (SurveyOption) bundle.getSerializable(SURVEY_OPTION);
+            mZipCode = bundle.getString(ZIP_CODE);
         }
     }
 
@@ -171,11 +177,15 @@ public class SurveyDialogFragment extends DialogFragment {
         String html = Utils.getFromAssets("template.html", getActivity());
 
         String publisher = mSurveyOption.publisher;
-        String option = Utils.parseParamMap(mSurveyOption.getParams());
+
+        Map<String, String> params = mSurveyOption.getParams();
+        params.put("postalCode", mZipCode);
+        String option = Utils.parseParamMap(params);
 
         String data = html.replace("[PUBLISHER_ID]", publisher)
                 .replace("[OPTION]", option)
                 .replace("[LOADER_BASE64]", Utils.encodeImage(getActivity(), "survata-spinner.png"));
+
 
         mWebView.loadDataWithBaseURL("https://www.survata.com", data, "text/html", "utf-8", null);
     }
