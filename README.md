@@ -15,7 +15,7 @@ Survata Android SDK
     
     Refer the steps in [README.md](https://github.com/novoda/bintray-release/blob/master/README.md). 
     
-    - modify `publish` closure in `build.gradle`
+    * modify `publish` closure in `build.gradle`
     
     ```groovy
          publish {
@@ -28,7 +28,7 @@ Survata Android SDK
          }
     ```
     
-    - use the task `bintrayUpload` to publish (make sure you build the project first!):
+    * use the task `bintrayUpload` to publish (make sure you build the project first!):
     
     ```bash
     $ ./gradlew clean build bintrayUpload -PbintrayUser=BINTRAY_USERNAME -PbintrayKey=BINTRAY_KEY -PdryRun=false
@@ -36,14 +36,19 @@ Survata Android SDK
 
 3.  Sync bintray user repository to jcenter
 
-    You now have your own Maven Repository on Bintray which is ready to be uploaded the library to.
+    * You now have your own Maven Repository on Bintray which is ready to be uploaded the library to.
+    
     [![ScreenShot](step1.png)](https://github.com/greycats/survata-android-sdk/blob/development/step1.png)
 
-    Nothing to do but click Send
+
+    * Nothing to do but click Send
+    
     [![ScreenShot](step2.png)](https://github.com/greycats/survata-android-sdk/blob/development/step2.png)
 
-    It is pretty easy to sync your library to jcenter. Just go to the web interface and simply click at "Add to JCenter".
+
+    * It is pretty easy to sync your library to jcenter. Just go to the web interface and simply click at "Add to JCenter".
     Nothing we can do now but wait for 2-3 hours to let bintray team approves our request. Once sync request is approved, you will receive an email informing you the change. 
+    
     [![ScreenShot](step3.png)](https://github.com/greycats/survata-android-sdk/blob/development/step3.png)
 
 # Setup #
