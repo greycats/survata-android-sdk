@@ -175,7 +175,7 @@ public class SurveyDialogFragment extends DialogFragment {
 
         String data = html.replace("[PUBLISHER_ID]", publisher)
                 .replace("[OPTION]", option)
-                .replace("[LOADER_BASE64]", Utils.encodeImage(getActivity(), "circles_large.gif"));
+                .replace("[LOADER_BASE64]", Utils.encodeImage(getActivity(), "survata-spinner.png"));
 
         mWebView.loadDataWithBaseURL("https://www.survata.com", data, "text/html", "utf-8", null);
     }
