@@ -51,40 +51,66 @@ Survata Android SDK
     
     [![ScreenShot](step3.png)](https://github.com/greycats/survata-android-sdk/blob/development/step3.png)
 
-# Setup #
-1.  Add in your build.gradle file:
+# Usage #
 
+    Please check out [demo app](https://github.com/greycats/survata-android-demo) for a real-life demo.
+
+### Step 1
+
+Add dependencies in `build.gradle`.
+
+    ```groovy
+        dependencies {
+            compile 'com.survata.android:library:1.0.2'
+        }
     ```
-    compile 'com.survata.android:library:1.0.2'
+
+### Step 2
+
+Define Survey
+
+    ```java
+    private Survey mSurvey;
+    
+    private Button mSurveyButton;
+    
+    ...
+    
     ```
-2.  Please check out [demo app](https://github.com/greycats/survata-android-demo) for a real-life demo.
-    Here is a brief demo to bind Survey to a button:
+
+### Step 3
+
+Check survey availability. The publisherId is `@NonNull`.
 
     ```java
      public void checkSurvey() {
             Context context = getContext();
-            SurveyDebugOption option = new SurveyDebugOption(publisherId);
-    
+            SurveyOption option = new SurveyOption(publisherId);
             mSurvey = new Survey(option);
             mSurvey.create(getActivity(),
                     new Survey.SurveyAvailabilityListener() {
                         @Override
                         public void onSurveyAvailable(Survey.SurveyAvailability surveyAvailability) {
-                           
                             if (surveyAvailability == Survey.SurveyAvailability.AVAILABILITY) {
-                                // do something
+                                mSurveyButton.setVisibility(View.VISIBLE);
                             }
                         }
                     });
         }
-        
+     ```
+
+### Step 4  
+
+show survey in WebView. Should called after checkSurvey();
+It will return survey event(COMPLETED, SKIPPED, CANCELED, CREDIT_EARNED, NETWORK_NOT_AVAILABLE)
+     
+     ```java
      private void showSurvey() {                
             mSurvey.createSurveyWall(getActivity(), new Survey.SurveyStatusListener() {
                     @Override
-                    public void onResult(Survey.SurveyResult surveyResult) {
-                               
-                        if (surveyResult == Survey.SurveyResult.COMPLETED) {
-                            // do something
+                    public void onResult(Survey.SurveyEvents surveyEvents) {
+                        if (surveyEvents == Survey.SurveyEvents.COMPLETED) {
+                              mSurveyButton.setVisibility(View.GONE);
                         }
                     }
                 });
