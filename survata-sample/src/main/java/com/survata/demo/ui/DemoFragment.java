@@ -126,7 +126,7 @@ public class DemoFragment extends Fragment {
         option.contentName = Settings.getContentName(context);
 
         mSurvey = new Survey(option);
-        mSurvey.setSurvataLogger(mSurvataLogger);
+//        mSurvey.setSurvataLogger(mSurvataLogger);
         mSurvey.create(getActivity(),
                 new Survey.SurveyAvailabilityListener() {
                     @Override

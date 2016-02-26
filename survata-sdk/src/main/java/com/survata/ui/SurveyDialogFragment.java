@@ -165,6 +165,10 @@ public class SurveyDialogFragment extends DialogFragment {
             webSettings.setAllowFileAccessFromFileURLs(true);
         }
 
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.JELLY_BEAN) {
+            mWebView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        }
+
         mWebView.addJavascriptInterface(new SurveyJavaScriptInterface(), JS_INTERFACE_NAME);
 
         mWebView.setWebViewClient(new WebViewClient() {
