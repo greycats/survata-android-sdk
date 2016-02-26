@@ -64,8 +64,21 @@ Add dependencies in `build.gradle`.
             compile 'com.survata.android:library:1.0.2'
         }
     ```
-
 ### Step 2
+
+Add permission in `AndroidManifest.xml`
+
+    ```
+        <uses-permission android:name="android.permission.INTERNET"/>
+        <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+        
+        // optional, if you want to send zipcode
+        <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+        <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    ```
+    
+
+### Step 3
 
 Define Survey
 
@@ -78,7 +91,7 @@ Define Survey
     
     ```
 
-### Step 3
+### Step 4
 
 Check survey availability. The publisherId is `@NonNull`.
 
@@ -99,7 +112,7 @@ Check survey availability. The publisherId is `@NonNull`.
         }
      ```
 
-### Step 4  
+### Step 5  
 
 show survey in WebView. Should called after checkSurvey();
 It will return survey event(COMPLETED, SKIPPED, CANCELED, CREDIT_EARNED, NETWORK_NOT_AVAILABLE)

@@ -99,8 +99,6 @@ public class SurveyDialogFragment extends DialogFragment {
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
-
         if (mWebView != null) {
             mWebView.stopLoading();
 
@@ -117,6 +115,8 @@ public class SurveyDialogFragment extends DialogFragment {
 
             System.gc();
         }
+
+        super.onDestroy();
     }
 
     private class SurveyJavaScriptInterface {
