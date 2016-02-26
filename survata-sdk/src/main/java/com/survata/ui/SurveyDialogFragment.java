@@ -97,6 +97,28 @@ public class SurveyDialogFragment extends DialogFragment {
         createSurveyWall();
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        if (mWebView != null) {
+            mWebView.stopLoading();
+
+            mWebView.clearFormData();
+            mWebView.clearAnimation();
+            mWebView.clearDisappearingChildren();
+            mWebView.clearView();
+            mWebView.clearHistory();
+            mWebView.destroyDrawingCache();
+            mWebView.freeMemory();
+            mWebView.destroy();
+
+            mWebView = null;
+
+            System.gc();
+        }
+    }
+
     private class SurveyJavaScriptInterface {
 
         @JavascriptInterface
@@ -175,6 +197,18 @@ public class SurveyDialogFragment extends DialogFragment {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 return false;
+            }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+
+                mWebView.clearAnimation();
+                mWebView.clearDisappearingChildren();
+                mWebView.destroyDrawingCache();
+                mWebView.freeMemory();
+
+                System.gc();
             }
         });
 
