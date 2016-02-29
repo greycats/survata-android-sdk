@@ -206,9 +206,6 @@ public class SurveyDialogFragment extends DialogFragment {
                 mWebView.clearAnimation();
                 mWebView.clearDisappearingChildren();
                 mWebView.destroyDrawingCache();
-                mWebView.freeMemory();
-
-                System.gc();
             }
         });
 
