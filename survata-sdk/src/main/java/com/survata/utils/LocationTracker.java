@@ -104,9 +104,11 @@ public abstract class LocationTracker implements LocationListener {
     @Override
     public final void onLocationChanged(@NonNull Location location) {
         Log.i(TAG, "onLocationChanged " + location);
-        LocationTracker.sLocation = new Location(location);
-        mIsLocationFound = true;
-        onLocationFound(location);
+        if (mIsListening) {
+            LocationTracker.sLocation = new Location(location);
+            mIsLocationFound = true;
+            onLocationFound(location);
+        }
     }
 
     public abstract void onLocationFound(@NonNull Location location);

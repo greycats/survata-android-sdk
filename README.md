@@ -3,7 +3,10 @@ Survata Android SDK
 
 # Requirements #
 
-- Android SDK v14
+- Android 4.0 (API Version 14) and up
+- android-support-v4.jar, r23 (Updated in 1.0.5)
+- android-support-annotations.jar, r23 (Updated in 1.0.5)
+- Volley Library (library-1.0.19.jar)(Updated in 1.0.5)
 
 # How to create aar and upload to jcenter #
 
