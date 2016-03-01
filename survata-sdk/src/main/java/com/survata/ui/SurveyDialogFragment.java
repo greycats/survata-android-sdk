@@ -199,9 +199,11 @@ public class SurveyDialogFragment extends DialogFragment {
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
 
-                mWebView.clearAnimation();
-                mWebView.clearDisappearingChildren();
-                mWebView.destroyDrawingCache();
+                if (mWebView != null) {
+                    mWebView.clearAnimation();
+                    mWebView.clearDisappearingChildren();
+                    mWebView.destroyDrawingCache();
+                }
             }
         });
 
