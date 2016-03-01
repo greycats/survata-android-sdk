@@ -22,7 +22,6 @@ public class HomePagerAdapter extends FragmentPagerAdapter {
         this(activity, ImmutableList.<Fragment>builder()
                 .add(new DemoFragment())
                 .add(new SettingFragment())
-                .add(new TestFragment())
                 .build());
     }
 
@@ -58,9 +57,6 @@ public class HomePagerAdapter extends FragmentPagerAdapter {
             case SettingFragment.INDEX:
                 titleResId = getSettingFragment().getTitleResId();
                 break;
-            case TestFragment.INDEX:
-                titleResId = getTestFragment().getTitleResId();
-                break;
             default:
                 Log.d(TAG, "unknown position getPageTitle: " + position);
                 return null;
@@ -75,10 +71,6 @@ public class HomePagerAdapter extends FragmentPagerAdapter {
 
     public SettingFragment getSettingFragment() {
         return (SettingFragment) getItem(SettingFragment.INDEX);
-    }
-
-    public TestFragment getTestFragment() {
-        return (TestFragment) getItem(TestFragment.INDEX);
     }
 
     public View getTabView(int position) {
@@ -101,11 +93,6 @@ public class HomePagerAdapter extends FragmentPagerAdapter {
             return settingFragment.INDEX;
         }
 
-        TestFragment testFragment = getTestFragment();
-        otherTag = testFragment.getTitleResId();
-        if (otherTag.equals(tag)) {
-            return testFragment.INDEX;
-        }
         throw new IllegalArgumentException("Couldn't find tag: " + tag);
     }
 }

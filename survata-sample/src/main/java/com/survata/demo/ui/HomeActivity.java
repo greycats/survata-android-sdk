@@ -69,19 +69,15 @@ public class HomeActivity extends AppCompatActivity implements ShakeDetector.Lis
 
         DemoFragment demoFragment = mHomePagerAdapter.getSurveyFragment();
         SettingFragment settingFragment = mHomePagerAdapter.getSettingFragment();
-        TestFragment testFragment = mHomePagerAdapter.getTestFragment();
 
         TabLayout.Tab surveyTab = createTabForFragment(demoFragment.getTitleResId());
         TabLayout.Tab settingTab = createTabForFragment(settingFragment.getTitleResId());
-        TabLayout.Tab testTab = createTabForFragment(testFragment.getTitleResId());
 
         mTabs.add(surveyTab);
         mTabs.add(settingTab);
-        mTabs.add(testTab);
 
         mTabLayout.addTab(surveyTab, DemoFragment.INDEX);
         mTabLayout.addTab(settingTab, SettingFragment.INDEX);
-        mTabLayout.addTab(testTab, TestFragment.INDEX);
 
         for (int i = 0; i < mTabLayout.getTabCount(); i++) {
             TabLayout.Tab tab = mTabLayout.getTabAt(i);
