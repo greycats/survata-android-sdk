@@ -105,15 +105,11 @@ public class SurveyDialogFragment extends DialogFragment {
             mWebView.clearFormData();
             mWebView.clearAnimation();
             mWebView.clearDisappearingChildren();
-            mWebView.clearView();
             mWebView.clearHistory();
             mWebView.destroyDrawingCache();
-            mWebView.freeMemory();
             mWebView.destroy();
 
             mWebView = null;
-
-            System.gc();
         }
 
         super.onDestroy();
