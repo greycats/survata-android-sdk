@@ -30,41 +30,16 @@ public class Survey {
 
     private String mZipCode;
 
-    /**
-     * Initialize survey
-     * @param surveyOption creation options
-     */
-    public Survey(SurveyOption surveyOption) {
-        mSurveyOption = surveyOption;
-    }
-
-    /**
-     * if you need log to client, you can call this method.
-     * @param survataLogger
-     */
-    public void setSurvataLogger(SurvataLogger survataLogger) {
-        Logger.setmSurvataLogger(survataLogger);
-    }
-
     public interface SurvataLogger {
         void surveyLogVerbose(String tag, String msg);
-
         void surveyLogVerbose(String tag, String msg, Throwable tr);
-
         void surveyLogDebug(String tag, String msg);
-
         void surveyLogDebug(String tag, String msg, Throwable tr);
-
         void surveyLogInfo(String tag, String msg);
-
         void surveyLogInfo(String tag, String msg, Throwable tr);
-
         void surveyLogWarn(String tag, String msg);
-
         void surveyLogWarn(String tag, String msg, Throwable tr);
-
         void surveyLogError(String tag, String msg);
-
         void surveyLogError(String tag, String msg, Throwable tr);
     }
 
@@ -73,6 +48,38 @@ public class Survey {
      */
     public interface SurveyAvailabilityListener {
         void onSurveyAvailable(SurveyAvailability surveyAvailability);
+    }
+
+    /**
+     * survey event callback when show survey
+     */
+    public interface SurveyStatusListener {
+        void onEvent(SurveyEvents surveyEvents);
+    }
+
+    public interface SurveyDebugOptionInterface {
+        String getPreview();
+        String getZipcode();
+        boolean getSendZipcode();
+    }
+
+
+    /**
+     * Initialize survey
+     * @param surveyOption creation options
+     */
+    public Survey(SurveyOption surveyOption) {
+        mSurveyOption = surveyOption;
+    }
+
+
+
+    /**
+     * if you need log to client, you can call this method.
+     * @param survataLogger
+     */
+    public void setSurvataLogger(SurvataLogger survataLogger) {
+        Logger.setmSurvataLogger(survataLogger);
     }
 
     /**
@@ -86,13 +93,6 @@ public class Survey {
     }
 
     /**
-     * survey event callback when show survey
-     */
-    public interface SurveyStatusListener {
-        void onEvent(SurveyEvents surveyEvents);
-    }
-
-    /**
      * enum status returned in present api
      */
     public enum SurveyEvents {
@@ -102,15 +102,6 @@ public class Survey {
         CREDIT_EARNED,                // survey loaded done
         NETWORK_NOT_AVAILABLE         // network is not available
     }
-
-    public interface SurveyDebugOptionInterface {
-        String getPreview();
-
-        String getZipcode();
-
-        boolean getSendZipcode();
-    }
-
     /**
      * To present survey over DialogFragment.
      *
