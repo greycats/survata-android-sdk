@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.survata.Survey;
 import com.survata.demo.R;
@@ -32,7 +33,7 @@ public class DemoFragment extends Fragment {
 
         @Override
         public void surveyLogVerbose(String tag, String msg) {
-            
+
         }
 
         @Override
@@ -117,7 +118,7 @@ public class DemoFragment extends Fragment {
         // show loading default
         showLoadingSurveyView();
 
-        Context context = getContext();
+        final Context context = getContext();
         String publisherId = Settings.getPublisherId(context);
         SurveyDebugOption option = new SurveyDebugOption(publisherId);
         option.preview = Settings.getPreviewId(context);
@@ -132,11 +133,30 @@ public class DemoFragment extends Fragment {
                     @Override
                     public void onSurveyAvailable(Survey.SurveyAvailability surveyAvailability) {
                         Log.d(TAG, "check survey result: " + surveyAvailability);
-                        if (surveyAvailability == Survey.SurveyAvailability.AVAILABILITY) {
-                            showCreateSurveyWallButton();
-                        } else {
-                            showFullView();
+
+                        String info = "";
+                        switch (surveyAvailability) {
+
+                            case AVAILABILITY:
+                                info = "available";
+                                showCreateSurveyWallButton();
+                                break;
+                            case NOT_AVAILABLE:
+                                info = "not available";
+                                showFullView();
+                                break;
+                            case SERVER_ERROR:
+                                info = "server error";
+                                showFullView();
+                                break;
+                            case NETWORK_NOT_AVAILABLE:
+                                info = "network not available";
+                                showFullView();
+                                break;
+                            default:
+                                break;
                         }
+                        Toast.makeText(context, "'/create' call result : " + info, Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -144,14 +164,36 @@ public class DemoFragment extends Fragment {
     private void showSurvey() {
         blur();
 
-        mSurvey.createSurveyWall(getActivity(), new Survey.SurveyStatusListener() {
+        final Activity activity = getActivity();
+
+        mSurvey.createSurveyWall(activity, new Survey.SurveyStatusListener() {
             @Override
             public void onEvent(Survey.SurveyEvents surveyEvents) {
                 Log.d(TAG, "surveyEvents: " + surveyEvents);
 
-                if (surveyEvents == Survey.SurveyEvents.COMPLETED) {
-                    showFullView();
+                String info = "";
+                switch (surveyEvents){
+
+                    case COMPLETED:
+                        info = "completed";
+                        showFullView();
+                        break;
+                    case SKIPPED:
+                        info = "skipped";
+                        break;
+                    case CANCELED:
+                        info = "canceled";
+                        break;
+                    case CREDIT_EARNED:
+                        info = "credit earned";
+                        break;
+                    case NETWORK_NOT_AVAILABLE:
+                        info = "network not available";
+                        break;
+                    default:
+                        break;
                 }
+                Toast.makeText(activity, "'surveyWall': : " + info, Toast.LENGTH_SHORT).show();
             }
         });
     }
