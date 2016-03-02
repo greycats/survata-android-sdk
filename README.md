@@ -64,7 +64,7 @@ Add dependencies in `build.gradle`.
 
     ```groovy
         dependencies {
-            compile 'com.survata.android:library:1.0.2'
+            compile 'com.survata.android:library:1.0.7'
         }
     ```
 ### Step 2
