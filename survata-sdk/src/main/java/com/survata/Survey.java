@@ -78,7 +78,7 @@ public class Survey {
      * if you need log to client, you can call this method.
      * @param survataLogger
      */
-    public void setSurvataLogger(SurvataLogger survataLogger) {
+    public static void setSurvataLogger(SurvataLogger survataLogger) {
         Logger.setmSurvataLogger(survataLogger);
     }
 
