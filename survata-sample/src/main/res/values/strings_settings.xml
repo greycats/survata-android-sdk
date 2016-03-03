@@ -7,7 +7,6 @@
     <string name="content_name_toggle">Use contentName</string>
     <string name="zip_code_toggle">Send zipCode</string>
     <string name="reset">Reset</string>
-    <string name="reset_value">Reset to default</string>
 
     <string name="default_publisher_id">survata-test</string>
     <string name="default_preview_id">46b140a358cd4fe7b425aa361b41bed9</string>

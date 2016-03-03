@@ -16,13 +16,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.RequiresPermission;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
-
-import net.jcip.annotations.ThreadSafe;
+import android.text.TextUtils;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @ThreadSafe
 public abstract class LocationTracker implements LocationListener {
@@ -39,8 +38,8 @@ public abstract class LocationTracker implements LocationListener {
 
     private LocationManager mLocationManagerService;
     private final Context mContext;
-    private volatile boolean mIsListening = false;
-    private volatile boolean mIsLocationFound = false;
+    private AtomicBoolean mIsListening = new AtomicBoolean(false);
+    private AtomicBoolean mIsLocationFound = new AtomicBoolean(false);
 
     public abstract void onLocationFound(@NonNull String zipCode);
 
@@ -71,38 +70,38 @@ public abstract class LocationTracker implements LocationListener {
     }
 
     @RequiresPermission(anyOf = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION})
-    public synchronized final void startListening() {
-        if (!mIsListening) {
-            Log.i(TAG, "startListening");
+    private void startListening() {
+        if (!mIsListening.get()) {
+            Logger.i(TAG, "startListening");
             // Listen for GPS Updates
             if (isGpsProviderEnabled(mContext) && checkPermission()) {
                 mLocationManagerService.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                         DEFAULT_MIN_TIME_BETWEEN_UPDATES, DEFAULT_MIN_METERS_BETWEEN_UPDATES, this);
             } else {
-                Log.d(TAG, "gps is not enabled");
+                Logger.d(TAG, "gps is not enabled");
             }
             // Listen for Network Updates
             if (isNetworkProviderEnabled(mContext) && checkPermission()) {
                 mLocationManagerService.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
                         DEFAULT_MIN_TIME_BETWEEN_UPDATES, DEFAULT_MIN_METERS_BETWEEN_UPDATES, this);
             } else {
-                Log.d(TAG, "network is not enabled");
+                Logger.d(TAG, "network is not enabled");
             }
             // Listen for Passive Updates
             if (isPassiveProviderEnabled(mContext) && checkPermission()) {
                 mLocationManagerService.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER,
                         DEFAULT_MIN_TIME_BETWEEN_UPDATES, DEFAULT_MIN_METERS_BETWEEN_UPDATES, this);
             } else {
-                Log.d(TAG, "passive is not enabled");
+                Logger.d(TAG, "passive is not enabled");
             }
-            mIsListening = true;
+            mIsListening.set(true);
 
             // If user has set a timeout
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    if (!mIsLocationFound && mIsListening) {
-                        Log.i(TAG, "timeout, no location found");
+                    if (!mIsLocationFound.get() && mIsListening.get()) {
+                        Logger.i(TAG, "timeout, no location found");
                         stopListening();
                         onLocationFoundFailed();
                     }
@@ -111,41 +110,50 @@ public abstract class LocationTracker implements LocationListener {
         }
     }
 
-    public synchronized final void stopListening() {
-        if (mIsListening) {
+    private void stopListening() {
+        if (mIsListening.get()) {
             if (checkPermission()) {
                 mLocationManagerService.removeUpdates(this);
             }
-            mIsListening = false;
+            mIsListening.set(false);
+        }
+    }
+
+    private void locationChanged(Location location) {
+        if (mIsListening.get()) {
+            mIsLocationFound.set(true);
+            stopListening();
+
+            String zipCode = getPostalCode(mContext, location);
+
+            if (TextUtils.isEmpty(zipCode)) {
+                onLocationFoundFailed();
+            } else {
+                onLocationFound(zipCode);
+                saveCachedZipCode(mContext, zipCode);
+            }
         }
     }
 
     @Override
     public final void onLocationChanged(@NonNull Location location) {
-        Log.i(TAG, "onLocationChanged " + location);
-        if (mIsListening) {
-            mIsLocationFound = true;
-            stopListening();
-
-            String zipCode = getPostalCode(mContext, location);
-            onLocationFound(zipCode);
-            saveCachedZipCode(mContext, zipCode);
-        }
+        Logger.i(TAG, "onLocationChanged " + location);
+        locationChanged(location);
     }
 
     @Override
     public void onProviderDisabled(@NonNull String provider) {
-        Log.i(TAG, "onProviderDisabled");
+        Logger.i(TAG, "onProviderDisabled");
     }
 
     @Override
     public void onProviderEnabled(@NonNull String provider) {
-        Log.i(TAG, "onProviderEnabled");
+        Logger.i(TAG, "onProviderEnabled");
     }
 
     @Override
     public void onStatusChanged(@NonNull String provider, int status, Bundle extras) {
-        Log.i(TAG, "onStatusChanged");
+        Logger.i(TAG, "onStatusChanged");
     }
 
     private static boolean isGpsProviderEnabled(@NonNull Context context) {
@@ -171,7 +179,7 @@ public abstract class LocationTracker implements LocationListener {
     }
 
     private static String getPostalCode(Context context, Location location) {
-        Geocoder geocoder = new Geocoder(context, Locale.ENGLISH);
+        Geocoder geocoder = new Geocoder(context, Locale.getDefault());
         try {
             List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
 
@@ -181,12 +189,16 @@ public abstract class LocationTracker implements LocationListener {
             }
 
         } catch (IOException e) {
-            Log.d(TAG, "fetch zipCode exception", e);
+            Logger.d(TAG, "fetch zipCode exception", e);
         }
         return "";
     }
 
     private void saveCachedZipCode(Context context, String zipCode) {
+        if (TextUtils.isEmpty(zipCode)) {
+            return;
+        }
+
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 
         SharedPreferences.Editor editor = sharedPreferences.edit();
