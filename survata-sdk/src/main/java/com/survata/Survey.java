@@ -1,17 +1,20 @@
 package com.survata;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 
 import com.android.volley.VolleyError;
 import com.survata.network.Networking;
 import com.survata.network.SurveyRequest;
 import com.survata.ui.SurveyDialogFragment;
-import com.survata.utils.Geocode;
+import com.survata.utils.LocationTracker;
 import com.survata.utils.Logger;
 import com.survata.utils.NetworkUtils;
 import com.survata.utils.Utils;
@@ -27,6 +30,8 @@ public class Survey {
     private static final String CREATE_SURVEY_URL = "https://surveywall-api.survata.com/rest/interview-check/create";
 
     private final SurveyOption mSurveyOption;
+
+    private LocationTracker mLocationTracker;
 
     private String mZipCode;
 
@@ -158,15 +163,35 @@ public class Survey {
                     mZipCode = zipcode;
                     startCreate(context, surveyAvailabilityListener);
                 } else {
-                    new Geocode().get(context, new Geocode.GeocodeCallback() {
-                        @Override
-                        public void onZipCodeFind(String zipcode) {
-                            if (!TextUtils.isEmpty(zipcode)) {
-                                mZipCode = zipcode;
+
+                    if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                            && ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        // You need to ask the user to enable the permissions
+                        Logger.e(TAG, "need permission: " + Manifest.permission.ACCESS_FINE_LOCATION + ", " + Manifest.permission.ACCESS_COARSE_LOCATION);
+
+                        startCreate(context, surveyAvailabilityListener);
+                    } else {
+                        mLocationTracker = new LocationTracker(context) {
+                            @Override
+                            public void onLocationFound(@NonNull String zipCode) {
+                                Logger.e(TAG, "fetch zipCode success: " + zipCode);
+
+                                if (!TextUtils.isEmpty(zipCode)) {
+                                    mZipCode = zipCode;
+                                }
+
+                                startCreate(context, surveyAvailabilityListener);
                             }
-                            startCreate(context, surveyAvailabilityListener);
-                        }
-                    });
+
+                            @Override
+                            public void onTimeout() {
+                                Logger.e(TAG, "fetch zipCode timeout");
+
+                                startCreate(context, surveyAvailabilityListener);
+                            }
+                        };
+                        mLocationTracker.startListening();
+                    }
                 }
             }
         } else {

@@ -15,21 +15,30 @@ import android.support.annotation.RequiresPermission;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
+import net.jcip.annotations.ThreadSafe;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
+@ThreadSafe
 public abstract class LocationTracker implements LocationListener {
 
     private static final String TAG = "LocationTracker";
 
-    public static final long DEFAULT_MIN_TIME_BETWEEN_UPDATES = 5 * 60 * 1000;
-    public static final float DEFAULT_MIN_METERS_BETWEEN_UPDATES = 100;
-    private static Location sLocation;
-    private LocationManager mLocationManagerService;
-    private boolean mIsListening = false;
-    private boolean mIsLocationFound = false;
-    private Context mContext;
+    private static final long DEFAULT_MIN_TIME_BETWEEN_UPDATES = 5 * 60 * 1000;
+    private static final long DEFAULT_TIMEOUT = 10 * 1000;
+    private static final float DEFAULT_MIN_METERS_BETWEEN_UPDATES = 100;
+
+    private Location mLocation;
+    private final LocationManager mLocationManagerService;
+    private final Context mContext;
+    private volatile boolean mIsListening = false;
+    private volatile boolean mIsLocationFound = false;
+
+    public abstract void onLocationFound(@NonNull String zipCode);
+
+    public abstract void onTimeout();
 
     @RequiresPermission(anyOf = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION})
     public LocationTracker(@NonNull Context context) {
@@ -37,25 +46,25 @@ public abstract class LocationTracker implements LocationListener {
 
         this.mLocationManagerService = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 
-        if (sLocation == null) {
+        if (mLocation == null) {
             if (checkPermission()) {
-                LocationTracker.sLocation = mLocationManagerService.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                mLocation = mLocationManagerService.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             }
         }
-        if (sLocation == null) {
+        if (mLocation == null) {
             if (checkPermission()) {
-                LocationTracker.sLocation = mLocationManagerService.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                mLocation = mLocationManagerService.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
             }
         }
-        if (sLocation == null) {
+        if (mLocation == null) {
             if (checkPermission()) {
-                LocationTracker.sLocation = mLocationManagerService.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+                mLocation = mLocationManagerService.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
             }
         }
     }
 
     @RequiresPermission(anyOf = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION})
-    public final void startListening() {
+    public synchronized final void startListening() {
         if (!mIsListening) {
             Log.i(TAG, "startListening");
             // Listen for GPS Updates
@@ -91,11 +100,11 @@ public abstract class LocationTracker implements LocationListener {
                         onTimeout();
                     }
                 }
-            }, 10 * 1000);
+            }, DEFAULT_TIMEOUT);
         }
     }
 
-    public final void stopListening() {
+    public synchronized final void stopListening() {
         if (mIsListening) {
             if (checkPermission()) {
                 mLocationManagerService.removeUpdates(this);
@@ -108,15 +117,12 @@ public abstract class LocationTracker implements LocationListener {
     public final void onLocationChanged(@NonNull Location location) {
         Log.i(TAG, "onLocationChanged " + location);
         if (mIsListening) {
-            LocationTracker.sLocation = new Location(location);
+            mLocation = null;
             mIsLocationFound = true;
-            onLocationFound(location);
+            stopListening();
+            onLocationFound(getPostalCode(mContext, location));
         }
     }
-
-    public abstract void onLocationFound(@NonNull Location location);
-
-    public abstract void onTimeout();
 
     @Override
     public void onProviderDisabled(@NonNull String provider) {
@@ -133,15 +139,15 @@ public abstract class LocationTracker implements LocationListener {
         Log.i(TAG, "onStatusChanged");
     }
 
-    public static boolean isGpsProviderEnabled(@NonNull Context context) {
+    private static boolean isGpsProviderEnabled(@NonNull Context context) {
         return isProviderEnabled(context, LocationManager.GPS_PROVIDER);
     }
 
-    public static boolean isNetworkProviderEnabled(@NonNull Context context) {
+    private static boolean isNetworkProviderEnabled(@NonNull Context context) {
         return isProviderEnabled(context, LocationManager.NETWORK_PROVIDER);
     }
 
-    public static boolean isPassiveProviderEnabled(@NonNull Context context) {
+    private static boolean isPassiveProviderEnabled(@NonNull Context context) {
         return isProviderEnabled(context, LocationManager.PASSIVE_PROVIDER);
     }
 
@@ -155,7 +161,7 @@ public abstract class LocationTracker implements LocationListener {
                 && ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED);
     }
 
-    public String getPostalCode(Context context, Location location) {
+    private static String getPostalCode(Context context, Location location) {
         Geocoder geocoder = new Geocoder(context, Locale.ENGLISH);
         try {
             List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
@@ -168,7 +174,6 @@ public abstract class LocationTracker implements LocationListener {
         } catch (IOException e) {
             Log.d(TAG, "fetch zipCode exception", e);
         }
-
         return "";
     }
 }
