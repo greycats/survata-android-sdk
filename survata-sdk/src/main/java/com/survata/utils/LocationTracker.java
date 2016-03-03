@@ -2,6 +2,7 @@ package com.survata.utils;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -10,9 +11,11 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresPermission;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import net.jcip.annotations.ThreadSafe;
@@ -27,39 +30,43 @@ public abstract class LocationTracker implements LocationListener {
     private static final String TAG = "LocationTracker";
 
     private static final long DEFAULT_MIN_TIME_BETWEEN_UPDATES = 5 * 60 * 1000;
-    private static final long DEFAULT_TIMEOUT = 10 * 1000;
+    private static final long DEFAULT_TIMEOUT = 5 * 1000;
     private static final float DEFAULT_MIN_METERS_BETWEEN_UPDATES = 100;
 
-    private Location mLocation;
-    private final LocationManager mLocationManagerService;
+    private static final long INTERVAL_TIME = 24 * 60 * 60 * 1000;
+    private static final String ZIP_CODE = "ZIP_CODE";
+    private static final String ZIP_CODE_DATE = "ZIP_CODE_DATE";
+
+    private LocationManager mLocationManagerService;
     private final Context mContext;
     private volatile boolean mIsListening = false;
     private volatile boolean mIsLocationFound = false;
 
     public abstract void onLocationFound(@NonNull String zipCode);
 
-    public abstract void onTimeout();
+    public abstract void onLocationFoundFailed();
 
-    @RequiresPermission(anyOf = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION})
     public LocationTracker(@NonNull Context context) {
         this.mContext = context;
+    }
 
-        this.mLocationManagerService = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+    public void start() {
+        String zipCode = getCachedZipCode(mContext);
 
-        if (mLocation == null) {
-            if (checkPermission()) {
-                mLocation = mLocationManagerService.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            }
+        if (zipCode != null) {
+            onLocationFound(zipCode);
+            return;
         }
-        if (mLocation == null) {
-            if (checkPermission()) {
-                mLocation = mLocationManagerService.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-            }
-        }
-        if (mLocation == null) {
-            if (checkPermission()) {
-                mLocation = mLocationManagerService.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
-            }
+
+        if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // You need to ask the user to enable the permissions
+            Logger.e(TAG, "need permission: " + Manifest.permission.ACCESS_FINE_LOCATION + ", " + Manifest.permission.ACCESS_COARSE_LOCATION);
+
+            onLocationFoundFailed();
+        } else {
+            this.mLocationManagerService = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
+            startListening();
         }
     }
 
@@ -97,7 +104,7 @@ public abstract class LocationTracker implements LocationListener {
                     if (!mIsLocationFound && mIsListening) {
                         Log.i(TAG, "timeout, no location found");
                         stopListening();
-                        onTimeout();
+                        onLocationFoundFailed();
                     }
                 }
             }, DEFAULT_TIMEOUT);
@@ -117,10 +124,12 @@ public abstract class LocationTracker implements LocationListener {
     public final void onLocationChanged(@NonNull Location location) {
         Log.i(TAG, "onLocationChanged " + location);
         if (mIsListening) {
-            mLocation = null;
             mIsLocationFound = true;
             stopListening();
-            onLocationFound(getPostalCode(mContext, location));
+
+            String zipCode = getPostalCode(mContext, location);
+            onLocationFound(zipCode);
+            saveCachedZipCode(mContext, zipCode);
         }
     }
 
@@ -175,5 +184,25 @@ public abstract class LocationTracker implements LocationListener {
             Log.d(TAG, "fetch zipCode exception", e);
         }
         return "";
+    }
+
+    private void saveCachedZipCode(Context context, String zipCode) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(ZIP_CODE, zipCode);
+        editor.putLong(ZIP_CODE_DATE, System.currentTimeMillis());
+        editor.apply();
+    }
+
+    private String getCachedZipCode(Context context) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+
+        long date = sharedPreferences.getLong(ZIP_CODE_DATE, -1);
+
+        if (date != -1 && System.currentTimeMillis() - date < INTERVAL_TIME) {
+            return sharedPreferences.getString(ZIP_CODE, null);
+        }
+        return null;
     }
 }
