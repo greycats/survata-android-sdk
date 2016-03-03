@@ -92,12 +92,8 @@ public class DemoFragment extends Fragment {
                                 info = "not available";
                                 showFullView();
                                 break;
-                            case SERVER_ERROR:
-                                info = "server error";
-                                showFullView();
-                                break;
-                            case NETWORK_NOT_AVAILABLE:
-                                info = "network not available";
+                            case ERROR:
+                                info = "error";
                                 showFullView();
                                 break;
                             default:

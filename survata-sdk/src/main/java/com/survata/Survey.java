@@ -88,8 +88,7 @@ public class Survey {
     public enum SurveyAvailability {
         AVAILABILITY,                 // survey is available
         NOT_AVAILABLE,                // survey is not available
-        SERVER_ERROR,                 // server error when check survey availability
-        NETWORK_NOT_AVAILABLE         // network is not available
+        ERROR,                        // create survey error
     }
 
     /**
@@ -144,7 +143,7 @@ public class Survey {
         if (!NetworkUtils.isNetworkConnected(context)) {
 
             if (surveyAvailabilityListener != null) {
-                surveyAvailabilityListener.onSurveyAvailable(SurveyAvailability.NETWORK_NOT_AVAILABLE);
+                surveyAvailabilityListener.onSurveyAvailable(SurveyAvailability.ERROR);
             }
         }
 
@@ -219,7 +218,7 @@ public class Survey {
                         Logger.d(TAG, "check survey availability failed", error);
 
                         if (surveyAvailabilityListener != null) {
-                            surveyAvailabilityListener.onSurveyAvailable(SurveyAvailability.SERVER_ERROR);
+                            surveyAvailabilityListener.onSurveyAvailable(SurveyAvailability.ERROR);
                         }
                     }
                 });
