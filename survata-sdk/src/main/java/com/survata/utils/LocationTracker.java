@@ -60,19 +60,22 @@ public abstract class LocationTracker implements LocationListener {
             Log.i(TAG, "startListening");
             // Listen for GPS Updates
             if (isGpsProviderEnabled(mContext) && checkPermission()) {
-                mLocationManagerService.requestLocationUpdates(LocationManager.GPS_PROVIDER, DEFAULT_MIN_TIME_BETWEEN_UPDATES, DEFAULT_MIN_METERS_BETWEEN_UPDATES, this);
+                mLocationManagerService.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                        DEFAULT_MIN_TIME_BETWEEN_UPDATES, DEFAULT_MIN_METERS_BETWEEN_UPDATES, this);
             } else {
                 Log.d(TAG, "gps is not enabled");
             }
             // Listen for Network Updates
             if (isNetworkProviderEnabled(mContext) && checkPermission()) {
-                mLocationManagerService.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, DEFAULT_MIN_TIME_BETWEEN_UPDATES, DEFAULT_MIN_METERS_BETWEEN_UPDATES, this);
+                mLocationManagerService.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+                        DEFAULT_MIN_TIME_BETWEEN_UPDATES, DEFAULT_MIN_METERS_BETWEEN_UPDATES, this);
             } else {
                 Log.d(TAG, "network is not enabled");
             }
             // Listen for Passive Updates
             if (isPassiveProviderEnabled(mContext) && checkPermission()) {
-                mLocationManagerService.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, DEFAULT_MIN_TIME_BETWEEN_UPDATES, DEFAULT_MIN_METERS_BETWEEN_UPDATES, this);
+                mLocationManagerService.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER,
+                        DEFAULT_MIN_TIME_BETWEEN_UPDATES, DEFAULT_MIN_METERS_BETWEEN_UPDATES, this);
             } else {
                 Log.d(TAG, "passive is not enabled");
             }
