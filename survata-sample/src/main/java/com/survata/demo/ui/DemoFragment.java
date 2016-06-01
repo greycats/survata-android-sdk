@@ -133,6 +133,9 @@ public class DemoFragment extends Fragment {
                     case NETWORK_NOT_AVAILABLE:
                         info = "network not available";
                         break;
+                    case NO_SURVEY_AVAILABLE:
+                        info = "NoSurveyAvailable";
+                        break;
                     default:
                         break;
                 }

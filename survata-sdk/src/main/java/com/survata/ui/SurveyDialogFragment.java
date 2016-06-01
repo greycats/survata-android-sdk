@@ -10,7 +10,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -118,13 +117,16 @@ public class SurveyDialogFragment extends DialogFragment {
     private class SurveyJavaScriptInterface {
 
         @JavascriptInterface
-        public void onSurveyLoaded(String data) {
-            Logger.d(TAG, "survey loaded");
+        public void onSurveyLoaded(Object data) {
+            Logger.d(TAG, "survey loaded" + data);
 
-            if (!TextUtils.isEmpty(data) && data.equals("monetizable")) {
-                //continue
-            } else {
-                updateResult(Survey.SurveyEvents.CREDIT_EARNED);
+            if (data != null && data instanceof Map) {
+                Map map = (Map) data;
+                if ("monetizable".equals(map.get("status"))) {
+                    //continue
+                } else {
+                    updateResult(Survey.SurveyEvents.CREDIT_EARNED);
+                }
             }
         }
 
@@ -148,6 +150,14 @@ public class SurveyDialogFragment extends DialogFragment {
         }
 
         @JavascriptInterface
+        public void noSurveyAvailable() {
+            Logger.d(TAG, "noSurveyAvailable");
+
+            updateResult(Survey.SurveyEvents.NO_SURVEY_AVAILABLE);
+        }
+
+
+        @JavascriptInterface
         public void onFail() {
             Logger.d(TAG, "onFail");
         }
@@ -159,7 +169,10 @@ public class SurveyDialogFragment extends DialogFragment {
             @Override
             public void run() {
 
-                if (surveyEvents == Survey.SurveyEvents.COMPLETED) {
+                if (surveyEvents == Survey.SurveyEvents.COMPLETED
+                        || surveyEvents == Survey.SurveyEvents.CREDIT_EARNED
+                        || surveyEvents == Survey.SurveyEvents.NO_SURVEY_AVAILABLE
+                        || surveyEvents == Survey.SurveyEvents.SKIPPED) {
                     dismissSurveyDialog();
                 }
 

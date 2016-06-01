@@ -111,7 +111,8 @@ public class Survey {
         SKIPPED,                      // user skip the survey
         CANCELED,                     // user cancel the survey
         CREDIT_EARNED,                // survey loaded done
-        NETWORK_NOT_AVAILABLE         // network is not available
+        NETWORK_NOT_AVAILABLE,        // network is not available
+        NO_SURVEY_AVAILABLE           // no survey available
     }
 
     /**
