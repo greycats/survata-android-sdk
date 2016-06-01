@@ -85,6 +85,10 @@
 				Android.onInterviewComplete();
 			});
 
+			s.on("noSurveyAvailable", function() {
+				Android.noSurveyAvailable();
+			});
+
 			s.startInterview();
 		}, true);
 		Survata.fail(function() {
