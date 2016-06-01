@@ -10,7 +10,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,18 +25,20 @@ import com.survata.SurveyOption;
 import com.survata.utils.Logger;
 import com.survata.utils.Utils;
 
+import java.util.Map;
+
 public class SurveyDialogFragment extends DialogFragment {
 
     public static final String TAG = "SurveyDialogFragment";
-    private static final String PUBLISHER = "publisher";
     private static final String SURVEY_OPTION = "SurveyOption";
+    private static final String ZIP_CODE = "zipcode";
     private static final String JS_INTERFACE_NAME = "Android";
 
     private WebView mWebView;
     private ImageView mCloseImage;
 
-    private String mPublisher;
     private SurveyOption mSurveyOption;
+    private String mZipCode;
 
     private Survey.SurveyStatusListener mSurveyStatusListener;
 
@@ -47,12 +48,12 @@ public class SurveyDialogFragment extends DialogFragment {
         mSurveyStatusListener = surveyStatusListener;
     }
 
-    public static SurveyDialogFragment newInstance(String publisher, SurveyOption surveyOption) {
+    public static SurveyDialogFragment newInstance(SurveyOption surveyOption, String zipCode) {
         SurveyDialogFragment dialogFragment = new SurveyDialogFragment();
         dialogFragment.setStyle(DialogFragment.STYLE_NORMAL, R.style.CustomDialog);
         Bundle bundle = new Bundle();
-        bundle.putString(PUBLISHER, publisher);
         bundle.putSerializable(SURVEY_OPTION, surveyOption);
+        bundle.putSerializable(ZIP_CODE, zipCode);
         dialogFragment.setArguments(bundle);
         return dialogFragment;
     }
@@ -63,8 +64,8 @@ public class SurveyDialogFragment extends DialogFragment {
 
         Bundle bundle = getArguments();
         if (bundle != null) {
-            mPublisher = bundle.getString(PUBLISHER);
             mSurveyOption = (SurveyOption) bundle.getSerializable(SURVEY_OPTION);
+            mZipCode = bundle.getString(ZIP_CODE);
         }
     }
 
@@ -80,6 +81,7 @@ public class SurveyDialogFragment extends DialogFragment {
             @Override
             public void onClick(View v) {
                 dismissSurveyDialog();
+                updateResult(Survey.SurveyEvents.CANCELED);
             }
         });
 
@@ -94,67 +96,88 @@ public class SurveyDialogFragment extends DialogFragment {
         createSurveyWall();
     }
 
+    @Override
+    public void onDestroy() {
+        if (mWebView != null) {
+            mWebView.stopLoading();
+
+            mWebView.clearFormData();
+            mWebView.clearAnimation();
+            mWebView.clearDisappearingChildren();
+            mWebView.clearHistory();
+            mWebView.destroyDrawingCache();
+            mWebView.destroy();
+
+            mWebView = null;
+        }
+
+        super.onDestroy();
+    }
+
     private class SurveyJavaScriptInterface {
 
         @JavascriptInterface
-        public void onSurveyLoaded(String data) {
-            Logger.d(TAG, "survey loaded");
+        public void onSurveyLoaded(Object data) {
+            Logger.d(TAG, "survey loaded" + data);
 
-            if (!TextUtils.isEmpty(data) && data.equals("monetizable")) {
-                //continue
-            } else {
-                updateResult(Survey.SurveyResult.CREDIT_EARNED);
+            if (data != null && data instanceof Map) {
+                Map map = (Map) data;
+                if ("monetizable".equals(map.get("status"))) {
+                    //continue
+                } else {
+                    updateResult(Survey.SurveyEvents.CREDIT_EARNED);
+                }
             }
-        }
-
-        @JavascriptInterface
-        public void onSurveyReady() {
-            Logger.d(TAG, "survey ready");
-
-            updateResult(Survey.SurveyResult.READY);
         }
 
         @JavascriptInterface
         public void onInterviewStart() {
             Logger.d(TAG, "The interview is start.");
-
-            updateResult(Survey.SurveyResult.STARTED);
         }
 
         @JavascriptInterface
         public void onInterviewSkip() {
             Logger.d(TAG, "The interview is skip.");
 
-            updateResult(Survey.SurveyResult.SKIPPED);
+            updateResult(Survey.SurveyEvents.SKIPPED);
         }
 
         @JavascriptInterface
         public void onInterviewComplete() {
             Logger.d(TAG, "The interview is complete");
 
-            updateResult(Survey.SurveyResult.COMPLETED);
+            updateResult(Survey.SurveyEvents.COMPLETED);
         }
+
+        @JavascriptInterface
+        public void noSurveyAvailable() {
+            Logger.d(TAG, "noSurveyAvailable");
+
+            updateResult(Survey.SurveyEvents.NO_SURVEY_AVAILABLE);
+        }
+
 
         @JavascriptInterface
         public void onFail() {
             Logger.d(TAG, "onFail");
-
-            updateResult(Survey.SurveyResult.FAILED);
         }
     }
 
-    private void updateResult(final Survey.SurveyResult surveyResult) {
+    private void updateResult(final Survey.SurveyEvents surveyEvents) {
 
         mHandler.post(new Runnable() {
             @Override
             public void run() {
 
-                if (surveyResult == Survey.SurveyResult.COMPLETED) {
+                if (surveyEvents == Survey.SurveyEvents.COMPLETED
+                        || surveyEvents == Survey.SurveyEvents.CREDIT_EARNED
+                        || surveyEvents == Survey.SurveyEvents.NO_SURVEY_AVAILABLE
+                        || surveyEvents == Survey.SurveyEvents.SKIPPED) {
                     dismissSurveyDialog();
                 }
 
                 if (mSurveyStatusListener != null) {
-                    mSurveyStatusListener.onResult(surveyResult);
+                    mSurveyStatusListener.onEvent(surveyEvents);
                 }
             }
         });
@@ -173,6 +196,10 @@ public class SurveyDialogFragment extends DialogFragment {
             webSettings.setAllowFileAccessFromFileURLs(true);
         }
 
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.JELLY_BEAN) {
+            mWebView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        }
+
         mWebView.addJavascriptInterface(new SurveyJavaScriptInterface(), JS_INTERFACE_NAME);
 
         mWebView.setWebViewClient(new WebViewClient() {
@@ -180,13 +207,31 @@ public class SurveyDialogFragment extends DialogFragment {
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 return false;
             }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+
+                if (mWebView != null) {
+                    mWebView.clearAnimation();
+                    mWebView.clearDisappearingChildren();
+                    mWebView.destroyDrawingCache();
+                }
+            }
         });
 
         String html = Utils.getFromAssets("template.html", getActivity());
 
-        String data = html.replace("[PUBLISHER_ID]", mPublisher)
-                .replace("[OPTION]", mSurveyOption.description())
-                .replace("[LOADER_BASE64]", Utils.encodeImage(getActivity(), "circles_large.gif"));
+        String publisher = mSurveyOption.publisher;
+
+        Map<String, String> params = mSurveyOption.getParams();
+        params.put("postalCode", mZipCode);
+        String option = Utils.parseParamMap(params);
+
+        String data = html.replace("[PUBLISHER_ID]", publisher)
+                .replace("[OPTION]", option)
+                .replace("[LOADER_BASE64]", Utils.encodeImage(getActivity(), "survata-spinner.png"));
+
 
         mWebView.loadDataWithBaseURL("https://www.survata.com", data, "text/html", "utf-8", null);
     }

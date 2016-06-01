@@ -1,9 +1,11 @@
 <resources>
-    <string name="app_name">survata-android-demo</string>
+    <string name="app_name">Survata</string>
     <string name="demo">In a crisp, pristine suit, with alcohol on his breath, Frank Sinatra managed to rise from the tough streets of an immigrant neighborhood to become the greatest singer and most captivating personality of the 20th century. He was a rock star before the advent of rock and roll and a fashion icon whose style has endured into the 21st century. He cavorted with beautiful and renowned starlets like Lauren Bacall, Marilyn Monroe, Judy Garland and Angie Dickinson. He had several engagements and four wives, including Mia Farrow and Ava Gardner. He was friends with the likes of Humphrey Bogart, Katharine Hepburn, Shirley Maclaine, Spencer Tracy, Cary Grant, Dean Martin, Sammy Davis Jr. and Peter Lawford. He was connected to mafiosos Lucky Luciano, Sam Giancana and Willie Moretti, while at the same time close to presidents John F. Kennedy, Franklin Roosevelt and Ronald Reagan.
         \n\nHe was famous, sexy, and beloved, as well as lonely, manic and harsh. He abused drugs and alcohol and was a notorious gambler and philanderer. His relationships were as damned as they were beautiful, and his desire to avoid boredom and loneliness nearly destroyed him and his career. Perhaps it was Sinatra’s innate loneliness that drove him to captivate millions and millions of people, yet it was his charisma, attitude and talent that gave him the ability to do so. It is because of both his charms and his faults that years after his death the legend and popularity of Old Blue Eyes is unwavering. The son of Italian immigrants, he would rise to epitomize fame, fortune and the American dream while revolutionizing popular music and setting the stage for Elvis Presley’s and The Beatles’ rock stardom. From his birth (Dec. 12, 1915) to his death (May 14, 1998) Sinatra fought, sometimes violently, to ensure his success and his place in history.</string>
     <string name="reset_data">Reset Demo?</string>
     <string name="ok">Reset</string>
     <string name="cancel">Cancel</string>
     <string name="show_survey">Complete 10-second survey to read full article!</string>
+    <string name="survey_demo">Demo</string>
+    <string name="survey_setting">Setting</string>
 </resources>

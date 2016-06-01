@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditTextPreference
+        android:defaultValue="@string/default_publisher_id"
+        android:key="@string/publisher_id"
+        android:summary="@string/default_publisher_id"
+        android:title="@string/publisher_id"/>
+
+    <EditTextPreference
+        android:defaultValue="@string/default_preview_id"
+        android:key="@string/preview_id"
+        android:summary="@string/default_preview_id"
+        android:title="@string/preview_id"/>
+
+    <EditTextPreference
+        android:defaultValue="@string/default_content_name"
+        android:key="@string/content_name"
+        android:summary="@string/default_content_name"
+        android:title="@string/content_name"/>
+
+    <SwitchPreference
+        android:key="@string/content_name_toggle"
+        android:summary=""
+        android:title="@string/content_name_toggle"/>
+
+    <EditTextPreference
+        android:defaultValue="@string/default_zip_code"
+        android:key="@string/zip_code"
+        android:summary="@string/default_zip_code"
+        android:title="@string/zip_code"/>
+
+    <SwitchPreference
+        android:key="@string/zip_code_toggle"
+        android:summary=""
+        android:title="@string/zip_code_toggle"/>
+
+    <com.survata.demo.ui.ButtonPreference
+        android:key="@string/reset"/>
+</PreferenceScreen>

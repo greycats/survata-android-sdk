@@ -18,6 +18,10 @@ android {
         }
     }
 
+    lintOptions {
+        abortOnError false
+    }
+
     publishNonDefault true
 }
 
@@ -27,8 +31,8 @@ configurations {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-
-    // use temporarily, should create own volley aar to avoid conflict
+    compile 'com.android.support:support-annotations:23.2.0'
+    compile 'com.android.support:support-v4:23.2.0'
     compile 'com.mcxiaoke.volley:library:1.0.19'
 }
 
@@ -36,7 +40,7 @@ publish {
     userOrg = 'evanliu1'
     groupId = 'com.survata.android'
     artifactId = 'library'
-    publishVersion = '1.0.0'
+    publishVersion = '1.0.8'
     desc = 'survata sdk'
     website = 'https://github.com/greycats/survata-android-sdk'
 }

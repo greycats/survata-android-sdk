@@ -1,37 +1,35 @@
 package com.survata;
 
-import android.text.TextUtils;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
+/**
+ * SurveyOption for Survata.
+ * do not modify it after sending to Survey.create
+ */
 public class SurveyOption implements Serializable {
-    private String brand;
-    private String explainer;
-    private String preview;
+    @Nullable
+    public String brand;
+    @Nullable
+    public String explainer;
+    @Nullable
+    public String contentName;
+    @NonNull
+    public final String publisher;
 
-    public SurveyOption(String brand, String explainer, String preview) {
-        this.brand = brand;
-        this.explainer = explainer;
-        this.preview = preview;
+    public SurveyOption(String publisher) {
+        this.publisher = publisher;
     }
 
-    public String description() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("{");
-        if (!TextUtils.isEmpty(brand)) {
-            append(builder, "brand", brand);
-        }
-        if (!TextUtils.isEmpty(explainer)) {
-            append(builder, "explainer", explainer);
-        }
-        if (!TextUtils.isEmpty(preview)) {
-            append(builder, "preview", preview);
-        }
-        builder.append("}");
-        return builder.toString();
-    }
-
-    private void append(StringBuilder builder, String key, String value){
-        builder.append(key).append(":").append("\"").append(preview).append("\"");
+    public Map<String, String> getParams() {
+        Map<String, String> map = new HashMap<>();
+        map.put("brand", brand);
+        map.put("explainer", explainer);
+        map.put("contentName", contentName);
+        return map;
     }
 }
